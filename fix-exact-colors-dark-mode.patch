@@ -1,0 +1,90 @@
+diff --git a/packages/element/src/shape.ts b/packages/element/src/shape.ts
+--- a/packages/element/src/shape.ts
++++ b/packages/element/src/shape.ts
+@@ -219,7 +219,7 @@
+     fillWeight: element.strokeWidth / 2,
+     hachureGap: element.strokeWidth * 4,
+     roughness: adjustRoughness(element),
+-    stroke: applyDarkModeFilter(element.strokeColor, isDarkMode),
++    stroke: element.strokeColor,
+     preserveVertices:
+       continuousPath || element.roughness < ROUGHNESS.cartoonist,
+   };
+@@ -235,7 +235,7 @@
+       options.fillStyle = element.fillStyle;
+       options.fill = isTransparent(element.backgroundColor)
+         ? undefined
+-        : applyDarkModeFilter(element.backgroundColor, isDarkMode);
++        : element.backgroundColor;
+       if (element.type === "ellipse") {
+         options.curveFitting = 1;
+       }
+@@ -247,7 +247,7 @@
+         options.fill =
+           element.backgroundColor === "transparent"
+             ? undefined
+-            : applyDarkModeFilter(element.backgroundColor, isDarkMode);
++            : element.backgroundColor;
+       }
+       return options;
+     }
+@@ -378,7 +378,7 @@
+     return [];
+   }
+ 
+-  const strokeColor = applyDarkModeFilter(element.strokeColor, isDarkMode);
++  const strokeColor = element.strokeColor;
+   const backgroundFillColor = applyDarkModeFilter(
+     canvasBackgroundColor,
+     isDarkMode,
+diff --git a/packages/element/src/renderElement.ts b/packages/element/src/renderElement.ts
+--- a/packages/element/src/renderElement.ts
++++ b/packages/element/src/renderElement.ts
+@@ -438,10 +438,7 @@
+       );
+ 
+       const commands = getStickyNotePathCommands(element);
+-      context.fillStyle = applyDarkModeFilter(
+-        element.backgroundColor,
+-        renderConfig.theme === THEME.DARK,
+-      );
++      context.fillStyle = element.backgroundColor;
+       fillStickyNoteShape(context, commands);
+       strokeStickyNoteEdge(context, commands);
+ 
+@@ -455,10 +452,7 @@
+         context.font = `${STICKY_NOTE_FOOTER.fontSize}px ${STICKY_NOTE_FOOTER.fontFamily}`;
+         context.textAlign = "right";
+         context.textBaseline = "alphabetic";
+-        context.fillStyle = applyDarkModeFilter(
+-          element.strokeColor,
+-          renderConfig.theme === THEME.DARK,
+-        );
++        context.fillStyle = element.strokeColor;
+         context.globalAlpha *= STICKY_NOTE_FOOTER.opacity;
+         context.fillText(footer.text, footer.x, footer.y);
+       }
+@@ -486,10 +480,7 @@
+ 
+       for (const shape of shapes) {
+         if (typeof shape === "string") {
+-          context.fillStyle = applyDarkModeFilter(
+-            element.strokeColor,
+-            renderConfig.theme === THEME.DARK,
+-          );
++          context.fillStyle = element.strokeColor;
+           context.fill(new Path2D(shape));
+         } else {
+           rc.draw(shape);
+@@ -638,10 +629,7 @@
+         context.canvas.setAttribute("dir", rtl ? "rtl" : "ltr");
+         context.save();
+         context.font = getFontString(element);
+-        context.fillStyle = applyDarkModeFilter(
+-          element.strokeColor,
+-          renderConfig.theme === THEME.DARK,
+-        );
++        context.fillStyle = element.strokeColor;
+         context.textAlign = element.textAlign as CanvasTextAlign;
+ 
+         // Canvas does not support multiline text by default
