@@ -381,6 +381,9 @@ const initializeScene = async (opts: {
 
 const isExternalBoardId = (id: string) => id.startsWith("external:");
 
+/** placeholder board id used when running outside Electron */
+const BROWSER_BOARD_ID = "browser";
+
 const ExcalidrawWrapper = ({
   boardId,
   boardName,
@@ -1664,6 +1667,28 @@ const ExcalidrawApp = () => {
     return <ExcalidrawPlusIframeExport />;
   }
 
+  // Without the Electron preload (plain browser, tests), there is no board
+  // storage, so render the editor directly like upstream excalidraw-app.
+  if (!window.boardStorage) {
+    return (
+      <TopErrorBoundary>
+        <Provider store={appJotaiStore}>
+          <ExcalidrawAPIProvider>
+            <ExcalidrawWrapper
+              boardId={BROWSER_BOARD_ID}
+              boardName={null}
+              onOpenExternalFile={async () => {}}
+            />
+          </ExcalidrawAPIProvider>
+        </Provider>
+      </TopErrorBoundary>
+    );
+  }
+
+  return <DesktopApp />;
+};
+
+const DesktopApp = () => {
   const [boardId, setBoardId] = useState<string | null>(null);
   const [boardName, setBoardName] = useState<string | null>(null);
 

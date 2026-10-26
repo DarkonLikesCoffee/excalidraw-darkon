@@ -263,7 +263,14 @@ export const FontPickerList = React.memo(
       [hoveredFont, filteredFonts, wrappedOnSelect, onHover, onClose],
     );
 
+    // personal fonts are only available in the Electron desktop app
+    const hasPersonalFontStorage =
+      typeof window.boardStorage?.listPersonalFonts === "function";
+
     useEffect(() => {
+      if (!hasPersonalFontStorage) {
+        return;
+      }
       let active = true;
       window.boardStorage
         .listPersonalFonts()
@@ -278,7 +285,7 @@ export const FontPickerList = React.memo(
           console.error("Failed to load personal fonts", error),
         );
       return () => { active = false; };
-    }, []);
+    }, [hasPersonalFontStorage]);
 
     useEffect(() => {
       onOpen();
@@ -416,6 +423,7 @@ export const FontPickerList = React.memo(
             onChange={debounce(setSearchTerm, 20)}
           />
         )}
+        {hasPersonalFontStorage && (
         <div className="personal-font-actions">
           <button type="button" className="personal-font-action" onClick={async () => {
             try {
@@ -437,6 +445,7 @@ export const FontPickerList = React.memo(
               setPersonalFontsVersion((version) => version + 1);
             }}>Remove selected</button>
         </div>
+        )}
         <ScrollableList
           className="dropdown-menu fonts manual-hover"
           placeholder={t("fontList.empty")}

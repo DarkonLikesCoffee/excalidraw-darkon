@@ -28,30 +28,34 @@ export const AppMainMenu: React.FC<{
   const excalidrawAPI = useExcalidrawAPI();
   return (
     <MainMenu>
-      <MainMenu.Item
-        onSelect={async () => {
-          try {
-            const file = await window.boardStorage.openExternal();
+      {window.boardStorage ? (
+        <MainMenu.Item
+          onSelect={async () => {
+            try {
+              const file = await window.boardStorage.openExternal();
 
-            if (!file) {
-              return;
+              if (!file) {
+                return;
+              }
+
+              await props.onOpenExternalFile(file);
+            } catch (error: any) {
+              console.error("[ExternalOpen] Failed to open board", error);
+
+              excalidrawAPI?.updateScene({
+                appState: {
+                  errorMessage:
+                    error?.message || "Failed to open Excalidraw file.",
+                },
+              });
             }
-
-            await props.onOpenExternalFile(file);
-          } catch (error: any) {
-            console.error("[ExternalOpen] Failed to open board", error);
-
-            excalidrawAPI?.updateScene({
-              appState: {
-                errorMessage:
-                  error?.message || "Failed to open Excalidraw file.",
-              },
-            });
-          }
-        }}
-      >
-        Open
-      </MainMenu.Item>
+          }}
+        >
+          Open
+        </MainMenu.Item>
+      ) : (
+        <MainMenu.DefaultItems.LoadScene />
+      )}
       <MainMenu.DefaultItems.SaveToActiveFile />
       <MainMenu.DefaultItems.Export />
       <MainMenu.DefaultItems.SaveAsImage />
