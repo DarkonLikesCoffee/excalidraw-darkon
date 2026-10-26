@@ -27,7 +27,17 @@ These need native file dialogs, a real window manager or your own data.
 - [ ] **Export dialogs:** export a board with custom-font text as **SVG** and as **PNG**, once in light and once in dark mode. Open the SVG in a web browser: the text keeps the custom font and the colors match the canvas.
 - [ ] **Window buttons:** minimize, maximize/restore and close in the title bar work.
 
-## 2. What to send back
+## 2. Installable desktop build
+
+`yarn desktop:dist` builds the app and packages it for the system you run it on (Windows installer, macOS `.dmg` or Linux AppImage) into `dist-desktop/`. Packages for Windows and macOS have to be built on those systems.
+
+- [ ] Run `yarn desktop:dist`. Send the terminal output if it fails.
+- [ ] Install/open the result from `dist-desktop/`. The app is not code-signed, so Windows (SmartScreen) or macOS (Gatekeeper) will warn the first time; allow it to run.
+- [ ] The installed app opens without `yarn desktop` running, shows your boards, and your custom fonts work.
+- [ ] Turn off your internet connection and start it again: everything still works, including fonts.
+- [ ] Note: the installed app keeps its own theme and library (browser storage is separate from the `yarn desktop` dev version); boards, custom fonts and recent boards are shared.
+
+## 3. What to send back
 
 - Which boxes failed, with a screenshot or a short description each.
 - Any error shown in the app (DevTools: `Ctrl+Shift+I` → Console).
@@ -37,6 +47,7 @@ These need native file dialogs, a real window manager or your own data.
 Checked in the real Electron app (Linux, virtual display), driven by a script:
 
 - **Desktop:** `yarn desktop` starts and stops cleanly, reuses a running dev server; the app opens on the dashboard.
+- **Production build (Linux):** `yarn desktop:dist` produces an AppImage that runs without a dev server, loads the boards and custom fonts from the same data folder, and makes no network requests.
 - **Boards:** create, draw, autosave to the `.excalidraw` file, back to the dashboard (title bar button), reopen, full restart and reopen; recent list and thumbnails update.
 - **Dark mode:** typing `00FF00` keeps `00ff00` in the hex box and draws exactly `#00ff00`; the eyedropper picks exactly `#00ff00`; colored text keeps its exact color while editing; hollow arrowheads match the dark background.
 - **Canvas background in dark mode** (expected limitation of the themed background): very bright colors can't be shown exactly; picking `#00FF00` for the background shows the closest possible green (`#37b637`, stored as `#009400`).

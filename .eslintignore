@@ -4,6 +4,7 @@ package-lock.json
 .vscode/
 firebase/
 dist/
+dist-desktop/
 public/workbox
 packages/excalidraw/types
 examples/**/public

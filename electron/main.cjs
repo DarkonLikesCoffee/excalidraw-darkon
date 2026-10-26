@@ -5,6 +5,11 @@ const { app, BrowserWindow, ipcMain, Menu, dialog, protocol, net } = require("el
 const boardStorage = require("./storage/boards.cjs");
 const personalFonts = require("./storage/personalFonts.cjs");
 
+// Keep using the data folder of the development setup (named after the
+// package), so the packaged app sees the same personal fonts, settings and
+// recent boards instead of starting from an empty "Excalidraw Custom" folder.
+app.setPath("userData", path.join(app.getPath("appData"), "excalidraw-monorepo"));
+
 // `yarn desktop` points the window at the Vite dev server; otherwise the
 // production build (excalidraw-app/build) is served from disk via app://.
 const DEV_SERVER_URL = process.env.EXCALIDRAW_DEV_SERVER_URL || null;
