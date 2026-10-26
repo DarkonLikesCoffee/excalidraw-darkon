@@ -8,6 +8,8 @@ import {
   unregisterPersonalFontFamily,
   getPersonalFontCssFamily,
   getPersonalFontFamilyName,
+  registerPersonalFontMetrics,
+  unregisterPersonalFontMetrics,
   FONT_SIZES,
 } from "@excalidraw/common";
 import { getContainerElement } from "@excalidraw/element";
@@ -114,6 +116,12 @@ export class Fonts {
     try {
       const loaded = await face.fontFace.load();
       document.fonts.add(loaded);
+      const metrics = Fonts.measurePersonalFontMetrics(
+        getPersonalFontCssFamily(font.id),
+      );
+      if (metrics) {
+        registerPersonalFontMetrics(font.id, metrics);
+      }
       return loaded;
     } catch (error) {
       console.error(`Failed to load personal font "${font.family}"`, error);
@@ -131,6 +139,51 @@ export class Fonts {
     );
     Fonts.registered.delete(id);
     unregisterPersonalFontFamily(id);
+    unregisterPersonalFontMetrics(id);
+  }
+
+  /**
+   * Reads a loaded personal font's ascent/descent through canvas text
+   * metrics (works for any font format), so that text is positioned within
+   * its line box like with the bundled fonts.
+   *
+   * @returns null if the browser doesn't report font metrics
+   */
+  public static measurePersonalFontMetrics(
+    cssFamily: string,
+  ): FontMetadata["metrics"] | null {
+    const UNITS_PER_EM = 1000;
+    const context = document.createElement("canvas").getContext("2d");
+    if (!context) {
+      return null;
+    }
+
+    context.font = `${UNITS_PER_EM}px "${cssFamily}"`;
+    const { fontBoundingBoxAscent: ascent, fontBoundingBoxDescent: descent } =
+      context.measureText("x");
+
+    if (
+      !Number.isFinite(ascent) ||
+      !Number.isFinite(descent) ||
+      ascent + descent <= 0
+    ) {
+      return null;
+    }
+
+    // keep the default line height (as before) unless the font is so tall
+    // that its lines would overlap noticeably
+    const contentHeight = (ascent + descent) / UNITS_PER_EM;
+    const lineHeight =
+      contentHeight > 1.5
+        ? Math.min(Math.ceil(contentHeight * 20) / 20, 3)
+        : 1.25;
+
+    return {
+      unitsPerEm: UNITS_PER_EM,
+      ascender: Math.round(ascent),
+      descender: -Math.round(descent),
+      lineHeight,
+    };
   }
 
   private readonly scene: Scene;

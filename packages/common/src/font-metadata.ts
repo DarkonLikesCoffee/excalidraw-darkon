@@ -161,14 +161,31 @@ export const LOCAL_FONT_PROTOCOL = "local:";
 /**
  * Calculates vertical offset for a text with alphabetic baseline.
  */
+const personalFontMetrics = new Map<number, FontMetadata["metrics"]>();
+
+/** metrics measured for a user-imported (personal) font */
+export const registerPersonalFontMetrics = (
+  id: number,
+  metrics: FontMetadata["metrics"],
+) => {
+  personalFontMetrics.set(id, metrics);
+};
+
+export const unregisterPersonalFontMetrics = (id: number) => {
+  personalFontMetrics.delete(id);
+};
+
+const getFontMetrics = (fontFamily: number) =>
+  FONT_METADATA[fontFamily]?.metrics ||
+  personalFontMetrics.get(fontFamily) ||
+  FONT_METADATA[FONT_FAMILY.Excalifont].metrics;
+
 export const getVerticalOffset = (
   fontFamily: ExcalidrawTextElement["fontFamily"],
   fontSize: ExcalidrawTextElement["fontSize"],
   lineHeightPx: number,
 ) => {
-  const { unitsPerEm, ascender, descender } =
-    FONT_METADATA[fontFamily]?.metrics ||
-    FONT_METADATA[FONT_FAMILY.Excalifont].metrics;
+  const { unitsPerEm, ascender, descender } = getFontMetrics(fontFamily);
 
   const fontSizeEm = fontSize / unitsPerEm;
   const lineGap =
@@ -182,9 +199,7 @@ export const getVerticalOffset = (
  * Gets line height for a selected family.
  */
 export const getLineHeight = (fontFamily: FontFamilyValues) => {
-  const { lineHeight } =
-    FONT_METADATA[fontFamily]?.metrics ||
-    FONT_METADATA[FONT_FAMILY.Excalifont].metrics;
+  const { lineHeight } = getFontMetrics(fontFamily);
 
   return lineHeight as ExcalidrawTextElement["lineHeight"];
 };
