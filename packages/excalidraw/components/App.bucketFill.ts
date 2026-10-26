@@ -1,11 +1,9 @@
 import {
-  applyDarkModeFilter,
   BUCKET_FILL_BACKGROUND_PICKS,
   COLOR_PALETTE,
   DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX,
   getSizeFromPoints,
   isTransparent,
-  THEME,
 } from "@excalidraw/common";
 import { pointFrom, type GlobalPoint, type LocalPoint } from "@excalidraw/math";
 
@@ -18,10 +16,7 @@ import {
   ShapeCache,
 } from "@excalidraw/element";
 
-import type {
-  NonDeletedExcalidrawElement,
-  Theme,
-} from "@excalidraw/element/types";
+import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
 
 import { actionChangeBucketFillBackgroundColor } from "../actions";
 import { editorJotaiStore } from "../editor-jotai";
@@ -290,12 +285,8 @@ export class AppBucketFill {
    * transparent (the tool's picker doesn't offer transparent, but the shared
    * state can hold it from the generic shape picker).
    */
-  public getBucketFillBackgroundColor = (
-    backgroundColor: string,
-    /** supply only for display purposes such as when applying to the cursor */
-    theme?: Theme,
-  ) =>
+  public getBucketFillBackgroundColor = (backgroundColor: string) =>
     isTransparent(backgroundColor)
       ? COLOR_PALETTE.green[DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX]
-      : applyDarkModeFilter(backgroundColor, theme === THEME.DARK);
+      : backgroundColor;
 }

@@ -111,7 +111,6 @@ export class AppCursor {
       activeTool.type === "bucketfill"
         ? this.app.bucketFill.getBucketFillBackgroundColor(
             this.app.state.currentItemBackgroundColor,
-            theme,
           )
         : undefined;
     const memo = this.toolCursorMemo;

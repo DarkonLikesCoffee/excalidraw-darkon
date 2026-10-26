@@ -121,6 +121,8 @@ describe("exportToSvg", () => {
       ELEMENTS,
       {
         ...DEFAULT_OPTIONS,
+        exportBackground: true,
+        viewBackgroundColor: "#ffffff",
         exportWithDarkMode: true,
       },
       null,
@@ -130,11 +132,15 @@ describe("exportToSvg", () => {
     expect(textElements.length).toBeGreaterThan(0);
 
     textElements.forEach((textEl) => {
-      // fill color should be inverted in dark mode
-      expect(textEl.getAttribute("fill")).toBe(
-        applyDarkModeFilter(textFixture.strokeColor),
-      );
+      // element colors are exported exactly as stored, in both themes
+      expect(textEl.getAttribute("fill")).toBe(textFixture.strokeColor);
     });
+
+    // the canvas background follows the theme, matching the editor canvas
+    expect(svgElement.querySelector("rect")).toHaveAttribute(
+      "fill",
+      applyDarkModeFilter("#ffffff"),
+    );
   });
 
   it("with exportPadding", async () => {

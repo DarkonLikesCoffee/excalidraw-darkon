@@ -4,13 +4,11 @@ import {
   MAX_DECIMALS_FOR_SVG_EXPORT,
   SVG_NS,
   THEME,
-  DARK_THEME_FILTER,
   getFontFamilyString,
   isRTL,
   isTestEnv,
   getVerticalOffset,
   applyDarkModeFilter,
-  MIME_TYPES,
   STICKY_NOTE_EDGE_SHADOW_OPACITY,
   STICKY_NOTE_EDGE_SHADOW_WIDTH,
   STICKY_NOTE_FOOTER,
@@ -202,13 +200,7 @@ const renderElementToSvg = (
         STICKY_NOTE_SHADOW_OPACITY,
       );
       const commands = getStickyNotePathCommands(element);
-      const rect = createPath(
-        commands,
-        applyDarkModeFilter(
-          element.backgroundColor,
-          renderConfig.theme === THEME.DARK,
-        ),
-      );
+      const rect = createPath(commands, element.backgroundColor);
       const clipPath = svgRoot.ownerDocument.createElementNS(
         SVG_NS,
         "clipPath",
@@ -245,13 +237,7 @@ const renderElementToSvg = (
         // page can't flip the label to the left edge
         dateText.setAttribute("text-anchor", "end");
         dateText.setAttribute("direction", "ltr");
-        dateText.setAttribute(
-          "fill",
-          applyDarkModeFilter(
-            element.strokeColor,
-            renderConfig.theme === THEME.DARK,
-          ),
-        );
+        dateText.setAttribute("fill", element.strokeColor);
         dateText.setAttribute("fill-opacity", `${STICKY_NOTE_FOOTER.opacity}`);
         dateText.textContent = footer.text;
         group.appendChild(dateText);
@@ -523,13 +509,7 @@ const renderElementToSvg = (
           // stroke (SVGPathString)
 
           const path = svgRoot.ownerDocument.createElementNS(SVG_NS, "path");
-          path.setAttribute(
-            "fill",
-            applyDarkModeFilter(
-              element.strokeColor,
-              renderConfig.theme === THEME.DARK,
-            ),
-          );
+          path.setAttribute("fill", element.strokeColor);
           path.setAttribute("d", shape);
           wrapper.appendChild(path);
         } else {
@@ -661,13 +641,6 @@ const renderElementToSvg = (
         }
 
         const g = svgRoot.ownerDocument.createElementNS(SVG_NS, "g");
-
-        if (
-          renderConfig.theme === THEME.DARK &&
-          fileData.mimeType === MIME_TYPES.svg
-        ) {
-          g.setAttribute("filter", DARK_THEME_FILTER);
-        }
 
         if (element.crop) {
           const mask = svgRoot.ownerDocument.createElementNS(SVG_NS, "mask");
@@ -816,13 +789,7 @@ const renderElementToSvg = (
           text.setAttribute("y", `${i * lineHeightPx + verticalOffset}`);
           text.setAttribute("font-family", getFontFamilyString(element));
           text.setAttribute("font-size", `${element.fontSize}px`);
-          text.setAttribute(
-            "fill",
-            applyDarkModeFilter(
-              element.strokeColor,
-              renderConfig.theme === THEME.DARK,
-            ),
-          );
+          text.setAttribute("fill", element.strokeColor);
           text.setAttribute("text-anchor", textAnchor);
           text.setAttribute("style", "white-space: pre;");
           text.setAttribute("direction", direction);

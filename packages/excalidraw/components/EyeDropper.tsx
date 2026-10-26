@@ -7,6 +7,7 @@ import {
   KEYS,
   MIME_TYPES,
   THEME,
+  removeDarkModeFilter,
   rgbToHex,
 } from "@excalidraw/common";
 
@@ -120,10 +121,15 @@ export const EyeDropper: React.FC<{
       return rgbToHex(pixel[0], pixel[1], pixel[2]);
     };
 
-    // getImageData() returns the rendered canvas pixel. Ordinary elements are
-    // drawn with their stored colors in both themes, so applying the inverse
-    // dark-mode filter here would corrupt the sampled color.
-    const getColorToApply = (color: string) => color;
+    // getImageData() returns the rendered canvas pixel. Elements are drawn
+    // with their stored colors in both themes, so element colors are applied
+    // as sampled. The canvas background is still rendered through the
+    // dark-mode filter, so a picked background color must be un-filtered to
+    // look like the sampled pixel once rendered.
+    const getColorToApply = (color: string) =>
+      colorPickerType === "canvasBackground" && appState.theme === THEME.DARK
+        ? removeDarkModeFilter(color)
+        : color;
 
     const mouseMoveListener = ({
       clientX,

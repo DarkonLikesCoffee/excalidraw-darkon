@@ -24,6 +24,7 @@ import {
   assertNever,
   COLOR_PALETTE,
   LINE_POLYGON_POINT_MERGE_DISTANCE,
+  applyDarkModeFilter,
   DEFAULT_STROKE_STREAMLINE,
 } from "@excalidraw/common";
 
@@ -373,13 +374,19 @@ const getArrowheadShapes = (
   generator: RoughGenerator,
   options: Options,
   canvasBackgroundColor: string,
+  isDarkMode: boolean,
 ) => {
   if (arrowhead === null) {
     return [];
   }
 
   const strokeColor = element.strokeColor;
-  const backgroundFillColor = canvasBackgroundColor;
+  // hollow arrowheads are filled to blend with the canvas background, which
+  // (unlike element colors) is still rendered through the dark-mode filter
+  const backgroundFillColor = applyDarkModeFilter(
+    canvasBackgroundColor,
+    isDarkMode,
+  );
   const cardinalityOneOrManyOffset = -0.25;
   const cardinalityZeroCircleScale = 0.8;
 
@@ -921,6 +928,7 @@ const _generateElementShape = (
             generator,
             options,
             canvasBackgroundColor,
+            theme === THEME.DARK,
           );
           shape.push(...shapes);
         }
@@ -938,6 +946,7 @@ const _generateElementShape = (
             generator,
             options,
             canvasBackgroundColor,
+            theme === THEME.DARK,
           );
           shape.push(...shapes);
         }

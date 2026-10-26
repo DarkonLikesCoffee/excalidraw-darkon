@@ -12,6 +12,7 @@ import {
   distance,
   getFontString,
   toBrandedType,
+  applyDarkModeFilter,
 } from "@excalidraw/common";
 
 import { getCommonBounds, getElementAbsoluteCoords } from "@excalidraw/element";
@@ -116,7 +117,9 @@ const addFrameLabelsAsTextElements = (
           fontSize: FRAME_STYLE.nameFontSize,
           lineHeight:
             FRAME_STYLE.nameLineHeight as ExcalidrawTextElement["lineHeight"],
-          strokeColor: FRAME_STYLE.nameColorLightTheme,
+          strokeColor: opts.exportWithDarkMode
+            ? FRAME_STYLE.nameColorDarkTheme
+            : FRAME_STYLE.nameColorLightTheme,
           text: getFrameLikeTitle(element),
         });
       textElement.y -= textElement.height;
@@ -460,7 +463,7 @@ export const exportToSvg = async (
     rect.setAttribute("height", `${height}`);
     rect.setAttribute(
       "fill",
-      viewBackgroundColor,
+      applyDarkModeFilter(viewBackgroundColor, exportWithDarkMode),
     );
     svgRoot.appendChild(rect);
   }

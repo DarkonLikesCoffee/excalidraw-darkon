@@ -14,7 +14,6 @@ import {
   TEXT_ALIGN,
   THEME,
   VERTICAL_ALIGN,
-  applyDarkModeFilter,
 } from "@excalidraw/common";
 
 import type {
@@ -1933,7 +1932,7 @@ describe("textWysiwyg", () => {
       API.setElements([]);
     });
 
-    it("should update textarea color when theme changes to dark mode and back", async () => {
+    it("should keep the exact textarea color when theme changes to dark mode and back", async () => {
       const originalColor = "#ff0000";
 
       const textElement = API.createElement({
@@ -1955,9 +1954,9 @@ describe("textWysiwyg", () => {
         // Trigger element mutation to fire onChange callback
         h.app.scene.mutateElement(textElement, {});
       });
-      expect(
-        colorsAreEqual(editor.style.color, applyDarkModeFilter(originalColor)),
-      ).toBe(true);
+      // element colors are rendered exactly in dark mode, so the editor
+      // must match the canvas rather than apply the dark-mode filter
+      expect(colorsAreEqual(editor.style.color, originalColor)).toBe(true);
 
       act(() => {
         h.setState({ theme: THEME.LIGHT });
