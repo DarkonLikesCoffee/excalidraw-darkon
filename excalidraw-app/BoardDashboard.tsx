@@ -108,6 +108,14 @@ export const BoardDashboard = ({
   } | null>(null);
 
   const [boardsFolder, setBoardsFolder] = useState<string | null>(null);
+  const [appVersion, setAppVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.desktopApp
+      ?.getVersion()
+      .then(setAppVersion)
+      .catch(() => {});
+  }, []);
   const [changingFolder, setChangingFolder] = useState(false);
   const [folderError, setFolderError] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -1396,6 +1404,14 @@ export const BoardDashboard = ({
               </div>
               {folderError && <p className="dialog__error">{folderError}</p>}
             </section>
+            {appVersion && (
+              <section className="board-settings-section">
+                <div className="board-settings-section__title">
+                  <h3>About</h3>
+                  <p>Excalidraw Custom {appVersion}</p>
+                </div>
+              </section>
+            )}
           </div>
         </div>
       )}

@@ -31,6 +31,10 @@ contextBridge.exposeInMainWorld("boardStorage", {
   },
 });
 
+contextBridge.exposeInMainWorld("desktopApp", {
+  getVersion: () => ipcRenderer.invoke("app:get-version"),
+});
+
 contextBridge.exposeInMainWorld("windowControls", {
   minimize: () => ipcRenderer.send("window:minimize"),
   maximize: () => ipcRenderer.send("window:maximize"),

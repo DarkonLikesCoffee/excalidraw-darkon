@@ -143,6 +143,7 @@ ipcMain.handle("personal-fonts:import", async () => {
   return personalFonts.importFont(getPersonalFontsFolder(), result.filePaths[0]);
 });
 ipcMain.handle("personal-fonts:remove", (_, id) => personalFonts.removeFont(getPersonalFontsFolder(), id));
+ipcMain.handle("app:get-version", () => app.getVersion());
 ipcMain.handle("boards:get-thumbnail", (_, id) => boardStorage.getThumbnail(id));
 ipcMain.handle("boards:save-thumbnail", (_, id, dataUrl) => boardStorage.saveThumbnail(id, dataUrl));
 
@@ -160,6 +161,8 @@ function createWindow() {
     height: 900,
     frame: false,
     titleBarStyle: "hidden",
+    // window/taskbar icon (installers use the same file, see "build.icon")
+    icon: path.join(__dirname, "icon.png"),
     webPreferences: { preload: path.join(__dirname, "preload.cjs"), contextIsolation: true, nodeIntegration: false },
   });
   win.webContents.on("before-input-event", (event, input) => {

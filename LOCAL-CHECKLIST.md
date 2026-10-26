@@ -47,6 +47,8 @@ These need native file dialogs, a real window manager or your own data.
 Checked in the real Electron app (Linux, virtual display), driven by a script:
 
 - **Desktop:** `yarn desktop` starts and stops cleanly, reuses a running dev server; the app opens on the dashboard.
+- **Dashboard dark mode:** the dashboard, its dialogs and menus and the title bar follow the editor theme (also when toggled inside the editor); the light theme is pixel-identical to before.
+- **Icon and version:** the AppImage uses `electron/icon.png`; Settings → About shows the version from `package.json` (also in the packaged app).
 - **Production build (Linux):** `yarn desktop:dist` produces an AppImage that runs without a dev server, loads the boards and custom fonts from the same data folder, and makes no network requests.
 - **Boards:** create, draw, autosave to the `.excalidraw` file, back to the dashboard (title bar button), reopen, full restart and reopen; recent list and thumbnails update.
 - **Dark mode:** typing `00FF00` keeps `00ff00` in the hex box and draws exactly `#00ff00`; the eyedropper picks exactly `#00ff00`; colored text keeps its exact color while editing; hollow arrowheads match the dark background.

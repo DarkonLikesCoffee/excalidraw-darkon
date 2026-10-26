@@ -111,6 +111,7 @@ declare global {
         }) => void,
       ) => () => void;
     };
+    desktopApp: { getVersion: () => Promise<string> };
     windowControls: {
       minimize: () => void;
       maximize: () => void;

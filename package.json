@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "excalidraw-monorepo",
+  "version": "0.1.0",
   "main": "electron/main.cjs",
   "packageManager": "yarn@1.22.22",
   "workspaces": [
@@ -100,9 +101,6 @@
   "build": {
     "appId": "com.darkonlikescoffee.excalidraw-custom",
     "productName": "Excalidraw Custom",
-    "extraMetadata": {
-      "version": "0.1.0"
-    },
     "directories": {
       "output": "dist-desktop"
     },
@@ -112,7 +110,7 @@
       "!electron/**/*.test.*",
       "excalidraw-app/build/**/*"
     ],
-    "icon": "public/android-chrome-512x512.png",
+    "icon": "electron/icon.png",
     "linux": {
       "target": "AppImage",
       "executableName": "excalidraw-custom",
