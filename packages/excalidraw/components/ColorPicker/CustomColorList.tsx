@@ -1,8 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
-
-
 import type { Theme } from "@excalidraw/element/types";
 
 import { useAtom } from "../../editor-jotai";

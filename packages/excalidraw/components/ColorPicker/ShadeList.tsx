@@ -1,9 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
-import {
-  type ColorPaletteCustom,
-} from "@excalidraw/common";
+import { type ColorPaletteCustom } from "@excalidraw/common";
 
 import type { Theme } from "@excalidraw/element/types";
 

@@ -18,8 +18,8 @@ export const BoardConflictDialog = ({
       <h2>Board changed on disk</h2>
 
       <p>
-        <strong>{boardName}</strong> was changed outside this app while you
-        had it open. Choose which version to keep.
+        <strong>{boardName}</strong> was changed outside this app while you had
+        it open. Choose which version to keep.
       </p>
 
       <div className="board-conflict-actions">

@@ -5,12 +5,7 @@
   overflow: auto;
   background: #f7f7f8;
   color: #1f1f1f;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .board-dashboard__container {
@@ -56,10 +51,7 @@
 
 .board-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(250px, 1fr)
-  );
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
@@ -266,10 +258,7 @@
   background: #fff;
   color: #444;
   cursor: pointer;
-  transition:
-    background 0.12s ease,
-    border-color 0.12s ease,
-    color 0.12s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
 .board-dashboard__settings-button:hover {
@@ -442,7 +431,6 @@
   background: var(--color-hover);
 }
 
-
 /* Recent boards */
 
 .board-dashboard__recent {
@@ -574,7 +562,6 @@
   cursor: default;
 }
 
-
 /* Responsive dashboard polish */
 
 .board-dashboard__container {
@@ -582,9 +569,7 @@
 }
 
 .board-card {
-  transition:
-    border-color 140ms ease,
-    box-shadow 140ms ease,
+  transition: border-color 140ms ease, box-shadow 140ms ease,
     transform 140ms ease;
 }
 
@@ -604,9 +589,7 @@
 .board-dashboard__secondary-button,
 .board-dashboard__settings-button,
 .board-card__actions button {
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
+  transition: background-color 120ms ease, border-color 120ms ease,
     box-shadow 120ms ease;
 }
 
@@ -756,7 +739,6 @@
   }
 }
 
-
 /* Keep list view usable in narrow dashboard windows. */
 @media (max-width: 640px) {
   .board-grid[style*="flex-direction: column"] .board-card {
@@ -800,7 +782,6 @@
     font-size: 14px;
   }
 }
-
 
 /* Prevent the dashboard from forcing a horizontal scrollbar in small windows. */
 .board-dashboard,
@@ -929,7 +910,6 @@
   }
 }
 
-
 /* Final dashboard polish: consistent controls, cards, and responsive spacing. */
 .board-dashboard__header-actions {
   gap: 10px;
@@ -956,12 +936,16 @@
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-.board-dashboard__board-controls > div[role="group"] > button[aria-pressed="true"] {
+.board-dashboard__board-controls
+  > div[role="group"]
+  > button[aria-pressed="true"] {
   background: #6965db !important;
   color: #fff;
 }
 
-.board-dashboard__board-controls > div[role="group"] > button[aria-pressed="false"] {
+.board-dashboard__board-controls
+  > div[role="group"]
+  > button[aria-pressed="false"] {
   color: var(--text-primary-color, #333);
 }
 
@@ -1094,7 +1078,6 @@
     font-size: 13px;
   }
 }
-
 
 /* Corrective responsive pass: prefer natural sizing over stretched controls. */
 @media (max-width: 640px) {
@@ -1244,7 +1227,6 @@
   }
 }
 
-
 /* Make dashboard action buttons visually explicit in Electron's narrow layout. */
 .board-dashboard__header-actions .board-dashboard__secondary-button {
   display: inline-flex;
@@ -1300,7 +1282,6 @@
     justify-self: stretch;
   }
 }
-
 
 /* Fix thumbnail clipping: the inner preview must follow its button's responsive height. */
 .board-card__preview-button .board-card__preview {

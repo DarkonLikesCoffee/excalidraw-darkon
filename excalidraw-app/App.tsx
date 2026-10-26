@@ -35,6 +35,7 @@ import {
 import polyfill from "@excalidraw/excalidraw/polyfill";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadFromBlob } from "@excalidraw/excalidraw/data/blob";
+import { serializeAsJSON } from "@excalidraw/excalidraw/data/json";
 import { t } from "@excalidraw/excalidraw/i18n";
 
 import {
@@ -149,14 +150,13 @@ import "./index.scss";
 import { ExcalidrawPlusPromoBanner } from "./components/ExcalidrawPlusPromoBanner";
 import { AppSidebar } from "./components/AppSidebar";
 
-import type { CollabAPI } from "./collab/Collab";
-
-import { serializeAsJSON } from "@excalidraw/excalidraw/data/json";
-
 import { BoardDashboard } from "./BoardDashboard";
 
 import { WindowTitleBar } from "./WindowTitleBar";
+
 import { BoardConflictDialog } from "./BoardConflictDialog";
+
+import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 

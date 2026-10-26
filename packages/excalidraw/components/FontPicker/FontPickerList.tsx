@@ -146,6 +146,9 @@ export const FontPickerList = React.memo(
           .sort((a, b) =>
             a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1,
           ),
+      // `Fonts.registered` is a static registry; the version is bumped when
+      // personal fonts are imported/removed to rebuild the list
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [personalFontsVersion],
     );
 
@@ -278,16 +281,22 @@ export const FontPickerList = React.memo(
       window.boardStorage
         .listPersonalFonts()
         .then(async (savedFonts) => {
-          if (!active) return;
+          if (!active) {
+            return;
+          }
           await Promise.all(
             savedFonts.map((font) => Fonts.registerPersonalFont(font)),
           );
-          if (active) setPersonalFontsVersion((version) => version + 1);
+          if (active) {
+            setPersonalFontsVersion((version) => version + 1);
+          }
         })
         .catch((error) =>
           console.error("Failed to load personal fonts", error),
         );
-      return () => { active = false; };
+      return () => {
+        active = false;
+      };
     }, [hasPersonalFontStorage]);
 
     useEffect(() => {
@@ -427,27 +436,48 @@ export const FontPickerList = React.memo(
           />
         )}
         {hasPersonalFontStorage && (
-        <div className="personal-font-actions">
-          <button type="button" className="personal-font-action" onClick={async () => {
-            try {
-              const font = await window.boardStorage.importPersonalFont();
-              if (font) {
-                await Fonts.registerPersonalFont(font);
-                setPersonalFontsVersion((version) => version + 1);
+          <div className="personal-font-actions">
+            <button
+              type="button"
+              className="personal-font-action"
+              onClick={async () => {
+                try {
+                  const font = await window.boardStorage.importPersonalFont();
+                  if (font) {
+                    await Fonts.registerPersonalFont(font);
+                    setPersonalFontsVersion((version) => version + 1);
+                  }
+                } catch (error) {
+                  console.error("Could not import font", error);
+                }
+              }}
+            >
+              Import font…
+            </button>
+            <button
+              type="button"
+              className="personal-font-action"
+              disabled={
+                !selectedFontFamily ||
+                !Fonts.registered.get(selectedFontFamily)?.metadata.local
               }
-            } catch (error) {
-              console.error("Could not import font", error);
-            }
-          }}>Import font…</button>
-          <button type="button" className="personal-font-action"
-            disabled={!selectedFontFamily || !Fonts.registered.get(selectedFontFamily)?.metadata.local}
-            onClick={async () => {
-              if (!selectedFontFamily || !Fonts.registered.get(selectedFontFamily)?.metadata.local) return;
-              await window.boardStorage.removePersonalFont(selectedFontFamily);
-              Fonts.unregisterPersonalFont(selectedFontFamily);
-              setPersonalFontsVersion((version) => version + 1);
-            }}>Remove selected</button>
-        </div>
+              onClick={async () => {
+                if (
+                  !selectedFontFamily ||
+                  !Fonts.registered.get(selectedFontFamily)?.metadata.local
+                ) {
+                  return;
+                }
+                await window.boardStorage.removePersonalFont(
+                  selectedFontFamily,
+                );
+                Fonts.unregisterPersonalFont(selectedFontFamily);
+                setPersonalFontsVersion((version) => version + 1);
+              }}
+            >
+              Remove selected
+            </button>
+          </div>
         )}
         <ScrollableList
           className="dropdown-menu fonts manual-hover"
