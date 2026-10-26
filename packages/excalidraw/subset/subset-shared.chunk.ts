@@ -18,6 +18,28 @@ export const Commands = {
 } as const;
 
 /**
+ * Detects the font container from its magic bytes. Bundled fonts are woff2,
+ * while user-imported (personal) fonts can also be woff or plain sfnt
+ * (ttf/otf).
+ */
+const getFontFormat = (arrayBuffer: ArrayBuffer) => {
+  const signature = String.fromCharCode(
+    ...new Uint8Array(arrayBuffer.slice(0, 4)),
+  );
+
+  switch (signature) {
+    case "wOF2":
+      return "woff2";
+    case "wOFF":
+      return "woff";
+    case "OTTO":
+      return "otf";
+    default:
+      return "ttf";
+  }
+};
+
+/**
  * Used by browser (main thread), node and jsdom, to subset the font based on the passed codepoints.
  *
  * @returns woff2 font as a base64 encoded string
@@ -47,10 +69,18 @@ export const subsetToBinary = async (
 ): Promise<ArrayBuffer> => {
   // lazy loaded wasm modules to avoid multiple initializations in case of concurrent triggers
   // IMPORTANT: could be expensive, as each new worker instance lazy loads these to their own memory ~ keep the # of workes small!
+  const format = getFontFormat(arrayBuffer);
+
+  if (format === "woff") {
+    // no woff (1.0) decoder is bundled, so it can't be subset ~ keep it whole
+    return arrayBuffer;
+  }
+
   const { compress, decompress } = await loadWoff2();
   const { subset } = await loadHbSubset();
 
-  const decompressedBinary = decompress(arrayBuffer).buffer;
+  const decompressedBinary =
+    format === "woff2" ? decompress(arrayBuffer).buffer : arrayBuffer;
   const snftSubset = subset(decompressedBinary, new Set(codePoints));
   const compressedBinary = compress(snftSubset.buffer);
 
@@ -77,5 +107,5 @@ export const toBase64 = async (arrayBuffer: ArrayBuffer) => {
     base64 = btoa(byteString);
   }
 
-  return `data:font/woff2;base64,${base64}`;
+  return `data:font/${getFontFormat(arrayBuffer)};base64,${base64}`;
 };

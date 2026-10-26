@@ -7,6 +7,7 @@ import {
   registerPersonalFontFamily,
   unregisterPersonalFontFamily,
   getPersonalFontCssFamily,
+  getPersonalFontFamilyName,
   FONT_SIZES,
 } from "@excalidraw/common";
 import { getContainerElement } from "@excalidraw/element";
@@ -350,8 +351,9 @@ export class Fonts {
         continue;
       }
 
-      if (metadata?.local) {
-        // don't inline local fonts
+      if (metadata?.local && getPersonalFontFamilyName(family) === undefined) {
+        // don't inline local fonts (personal fonts are "local" too, but unlike
+        // e.g. Helvetica we have their data, so they can be inlined)
         continue;
       }
 
