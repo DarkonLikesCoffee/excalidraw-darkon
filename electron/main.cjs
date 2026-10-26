@@ -10,6 +10,22 @@ const personalFonts = require("./storage/personalFonts.cjs");
 // recent boards instead of starting from an empty "Excalidraw Custom" folder.
 app.setPath("userData", path.join(app.getPath("appData"), "excalidraw-monorepo"));
 
+// Only one instance may use that data folder at a time (`yarn desktop` and the
+// installed app share it): a second one would find the browser storage locked.
+// The lock is tied to the data folder, so it must be requested after setPath.
+if (!app.requestSingleInstanceLock()) {
+  console.info("Excalidraw Custom is already running; focusing the existing window.");
+  app.exit(0);
+}
+
+app.on("second-instance", () => {
+  const win = BrowserWindow.getAllWindows()[0];
+  if (!win) return;
+  if (win.isMinimized()) win.restore();
+  win.show();
+  win.focus();
+});
+
 // `yarn desktop` points the window at the Vite dev server; otherwise the
 // production build (excalidraw-app/build) is served from disk via app://.
 const DEV_SERVER_URL = process.env.EXCALIDRAW_DEV_SERVER_URL || null;
