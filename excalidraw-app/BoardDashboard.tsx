@@ -1192,9 +1192,9 @@ export const BoardDashboard = ({
             boxSizing: "border-box",
             padding: "6px",
             overflow: "hidden",
-            border: "1px solid #dedee2",
+            border: "1px solid var(--desk-border, #dedee2)",
             borderRadius: "10px",
-            background: "#fff",
+            background: "var(--desk-surface, #fff)",
             boxShadow: "0 12px 32px rgba(0,0,0,.16)",
           }}
           onClick={(event) => event.stopPropagation()}
@@ -1203,7 +1203,7 @@ export const BoardDashboard = ({
             style={{
               overflow: "hidden",
               padding: "8px 10px 9px",
-              color: "#888",
+              color: "var(--desk-faint, #888)",
               fontSize: "11px",
               fontWeight: 600,
               textOverflow: "ellipsis",
@@ -1223,7 +1223,7 @@ export const BoardDashboard = ({
               borderRadius: "7px",
               padding: "9px 10px",
               background: "transparent",
-              color: "#2d2d30",
+              color: "var(--desk-text, #2d2d30)",
               font: "inherit",
               fontSize: "13px",
               textAlign: "left",
@@ -1247,7 +1247,7 @@ export const BoardDashboard = ({
               borderRadius: "7px",
               padding: "9px 10px",
               background: "transparent",
-              color: "#2d2d30",
+              color: "var(--desk-text, #2d2d30)",
               font: "inherit",
               fontSize: "13px",
               textAlign: "left",
@@ -1275,7 +1275,7 @@ export const BoardDashboard = ({
               borderRadius: "7px",
               padding: "9px 10px",
               background: "transparent",
-              color: "#2d2d30",
+              color: "var(--desk-text, #2d2d30)",
               font: "inherit",
               fontSize: "13px",
               textAlign: "left",
@@ -1300,7 +1300,7 @@ export const BoardDashboard = ({
               borderRadius: "7px",
               padding: "9px 10px",
               background: "transparent",
-              color: "#2d2d30",
+              color: "var(--desk-text, #2d2d30)",
               font: "inherit",
               fontSize: "13px",
               textAlign: "left",
@@ -1315,7 +1315,11 @@ export const BoardDashboard = ({
             Move to…
           </button>
           <div
-            style={{ height: "1px", margin: "5px 4px", background: "#ededee" }}
+            style={{
+              height: "1px",
+              margin: "5px 4px",
+              background: "var(--desk-border, #ededee)",
+            }}
           />
           <button
             type="button"

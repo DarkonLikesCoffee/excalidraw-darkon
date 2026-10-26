@@ -31,6 +31,7 @@ import {
   resolvablePromise,
   isRunningInIframe,
   isDevEnv,
+  THEME,
 } from "@excalidraw/common";
 import polyfill from "@excalidraw/excalidraw/polyfill";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -68,6 +69,7 @@ import type {
   FileId,
   NonDeletedExcalidrawElement,
   OrderedExcalidrawElement,
+  Theme,
 } from "@excalidraw/element/types";
 import type {
   AppState,
@@ -384,14 +386,28 @@ const isExternalBoardId = (id: string) => id.startsWith("external:");
 /** placeholder board id used when running outside Electron */
 const BROWSER_BOARD_ID = "browser";
 
+/** the editor theme saved by `useHandleAppTheme`, with "system" resolved */
+const getSavedEditorTheme = (): Theme => {
+  const savedTheme = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_THEME);
+  if (savedTheme === "system") {
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches
+      ? THEME.DARK
+      : THEME.LIGHT;
+  }
+  return savedTheme === THEME.DARK ? THEME.DARK : THEME.LIGHT;
+};
+
 const ExcalidrawWrapper = ({
   boardId,
   boardName,
   onOpenExternalFile,
+  onThemeChange,
 }: {
   boardId: string;
   boardName: string | null;
   onOpenExternalFile: (file: { id: string; name: string }) => Promise<void>;
+  /** lets the desktop shell (dashboard, title bar) follow the editor theme */
+  onThemeChange?: (theme: Theme) => void;
 }) => {
   const excalidrawAPI = useExcalidrawAPI();
 
@@ -399,6 +415,10 @@ const ExcalidrawWrapper = ({
   const isCollabDisabled = isRunningInIframe();
 
   const { editorTheme, appTheme, setAppTheme } = useHandleAppTheme();
+
+  useEffect(() => {
+    onThemeChange?.(editorTheme);
+  }, [editorTheme, onThemeChange]);
 
   const [langCode, setLangCode] = useAppLangCode();
 
@@ -1690,6 +1710,15 @@ const ExcalidrawApp = () => {
 
 const DesktopApp = () => {
   const [boardId, setBoardId] = useState<string | null>(null);
+  const [shellTheme, setShellTheme] = useState<Theme>(getSavedEditorTheme);
+
+  // follow OS theme changes while the dashboard is shown (theme "system")
+  useEffect(() => {
+    const mediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const handleChange = () => setShellTheme(getSavedEditorTheme());
+    mediaQuery?.addEventListener("change", handleChange);
+    return () => mediaQuery?.removeEventListener("change", handleChange);
+  }, []);
   const [boardName, setBoardName] = useState<string | null>(null);
 
   const openExternalFile = async ({
@@ -1705,6 +1734,9 @@ const DesktopApp = () => {
 
   return (
     <div
+      className={clsx("desktop-shell", {
+        "desktop-shell--dark": shellTheme === THEME.DARK,
+      })}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -1748,6 +1780,7 @@ const DesktopApp = () => {
                   boardId={boardId}
                   boardName={boardName}
                   onOpenExternalFile={openExternalFile}
+                  onThemeChange={setShellTheme}
                 />
               </ExcalidrawAPIProvider>
             </Provider>

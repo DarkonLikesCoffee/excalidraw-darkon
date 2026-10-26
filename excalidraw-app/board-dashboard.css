@@ -1,10 +1,36 @@
+/* Dark theme of the desktop shell (dashboard, title bar, dialogs), set on the
+   app root when the editor theme is dark. In the light theme these variables
+   are unset, so the original colors (the var() fallbacks below) apply. */
+.desktop-shell--dark {
+  --desk-page: #121212;
+  --desk-surface: #232329;
+  --desk-subtle: #1b1b20;
+  --desk-hover: #2e2d39;
+  --desk-text: #e3e3e8;
+  --desk-muted: #a6a6b0;
+  --desk-faint: #85858f;
+  --desk-primary-text: #a8a5ff;
+  --desk-border: #37363f;
+  --desk-border-strong: #4b4a55;
+
+  /* Excalidraw variables used by the shell's inline styles (the editor
+     defines its own on .excalidraw) */
+  --island-bg-color: #232329;
+  --default-border-color: #37363f;
+  --button-gray-1: #2e2d39;
+  --button-gray-2: #37363f;
+  --text-primary-color: #e3e3e8;
+
+  color-scheme: dark;
+}
+
 .board-dashboard {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
-  background: #f7f7f8;
-  color: #1f1f1f;
+  background: var(--desk-page, #f7f7f8);
+  color: var(--desk-text, #1f1f1f);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -30,7 +56,7 @@
 
 .board-dashboard__header p {
   margin: 8px 0 0;
-  color: #777;
+  color: var(--desk-muted, #777);
   font-size: 14px;
 }
 
@@ -57,9 +83,9 @@
 
 .board-card {
   overflow: hidden;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--desk-border, #e4e4e7);
   border-radius: 12px;
-  background: white;
+  background: var(--desk-surface, white);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
@@ -89,7 +115,7 @@
   border: 0;
   padding: 0;
   background: transparent;
-  color: #1f1f1f;
+  color: var(--desk-text, #1f1f1f);
   font-size: 16px;
   font-weight: 600;
   text-align: left;
@@ -100,7 +126,7 @@
 
 .board-card__date {
   margin: 6px 0 14px;
-  color: #888;
+  color: var(--desk-faint, #888);
   font-size: 12px;
 }
 
@@ -112,29 +138,29 @@
 .board-card__actions button {
   flex: 1;
   min-width: 0;
-  border: 1px solid #dedee2;
+  border: 1px solid var(--desk-border, #dedee2);
   border-radius: 7px;
   padding: 7px 10px;
-  background: white;
-  color: #333;
+  background: var(--desk-surface, white);
+  color: var(--desk-text, #333);
   cursor: pointer;
 }
 
 .board-card__actions button:hover {
-  background: #f5f5f6;
+  background: var(--desk-subtle, #f5f5f6);
 }
 
 .board-dashboard__empty {
   padding: 70px 30px;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--desk-border, #e4e4e7);
   border-radius: 12px;
-  background: white;
+  background: var(--desk-surface, white);
   text-align: center;
 }
 
 .board-dashboard__empty-icon {
   margin-bottom: 12px;
-  color: #aaa;
+  color: var(--desk-faint, #aaa);
   font-size: 32px;
 }
 
@@ -145,7 +171,7 @@
 
 .board-dashboard__empty p {
   margin: 8px 0 20px;
-  color: #777;
+  color: var(--desk-muted, #777);
 }
 
 .dialog-backdrop {
@@ -164,7 +190,7 @@
   box-sizing: border-box;
   padding: 24px;
   border-radius: 12px;
-  background: white;
+  background: var(--desk-surface, white);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
 }
 
@@ -175,7 +201,7 @@
 
 .dialog label {
   display: block;
-  color: #444;
+  color: var(--desk-text, #444);
   font-size: 13px;
   font-weight: 600;
 }
@@ -184,7 +210,7 @@
   width: 100%;
   box-sizing: border-box;
   margin-top: 7px;
-  border: 1px solid #d4d4d8;
+  border: 1px solid var(--desk-border, #d4d4d8);
   border-radius: 7px;
   padding: 10px 12px;
   outline: none;
@@ -204,7 +230,7 @@
 
 .dialog__message {
   margin: 0;
-  color: #666;
+  color: var(--desk-muted, #666);
   line-height: 1.5;
 }
 
@@ -216,10 +242,10 @@
 }
 
 .dialog__actions button {
-  border: 1px solid #ddd;
+  border: 1px solid var(--desk-border, #ddd);
   border-radius: 7px;
   padding: 9px 14px;
-  background: white;
+  background: var(--desk-surface, white);
   cursor: pointer;
 }
 
@@ -252,23 +278,23 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border: 1px solid #d9d9dd;
+  border: 1px solid var(--desk-border, #d9d9dd);
   border-radius: 8px;
   padding: 0;
-  background: #fff;
-  color: #444;
+  background: var(--desk-surface, #fff);
+  color: var(--desk-text, #444);
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
 .board-dashboard__settings-button:hover {
-  border-color: #c9c9cf;
-  background: #f6f6f7;
-  color: #222;
+  border-color: var(--desk-border-strong, #c9c9cf);
+  background: var(--desk-subtle, #f6f6f7);
+  color: var(--desk-text, #222);
 }
 
 .board-dashboard__settings-button:active {
-  background: #eeeeef;
+  background: var(--desk-hover, #eeeeef);
 }
 
 .board-dashboard__settings-icon {
@@ -298,7 +324,7 @@
 
 .board-settings-dialog__header p {
   margin: 7px 0 0;
-  color: #777;
+  color: var(--desk-muted, #777);
   font-size: 13px;
   line-height: 1.45;
 }
@@ -316,13 +342,13 @@
   border-radius: 7px;
   padding: 0;
   background: transparent;
-  color: #666;
+  color: var(--desk-muted, #666);
   cursor: pointer;
 }
 
 .board-settings-dialog__close:hover {
-  background: #f1f1f2;
-  color: #222;
+  background: var(--desk-subtle, #f1f1f2);
+  color: var(--desk-text, #222);
 }
 
 .board-settings-dialog__close-icon {
@@ -336,7 +362,7 @@
 
 .board-settings-section {
   padding-top: 20px;
-  border-top: 1px solid #e4e4e7;
+  border-top: 1px solid var(--desk-border, #e4e4e7);
 }
 
 .board-settings-section__title h3 {
@@ -347,7 +373,7 @@
 
 .board-settings-section__title p {
   margin: 5px 0 16px;
-  color: #777;
+  color: var(--desk-muted, #777);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -365,14 +391,14 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border: 1px solid #d4d4d8;
+  border: 1px solid var(--desk-border, #d4d4d8);
   border-radius: 8px;
   padding: 9px 11px;
-  background: #fff;
+  background: var(--desk-surface, #fff);
 }
 
 .board-settings-folder__label {
-  color: #777;
+  color: var(--desk-muted, #777);
   font-size: 11px;
   line-height: 1.2;
 }
@@ -380,7 +406,7 @@
 .board-settings-folder__value {
   min-width: 0;
   overflow: hidden;
-  color: #333;
+  color: var(--desk-text, #333);
   font-size: 13px;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -389,22 +415,22 @@
 
 .board-settings-folder__change {
   flex: 0 0 auto;
-  border: 1px solid #d4d4d8;
+  border: 1px solid var(--desk-border, #d4d4d8);
   border-radius: 7px;
   padding: 9px 13px;
-  background: #fff;
-  color: #333;
+  background: var(--desk-surface, #fff);
+  color: var(--desk-text, #333);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
 }
 
 .board-settings-folder__change:hover {
-  background: #f5f5f6;
+  background: var(--desk-subtle, #f5f5f6);
 }
 
 .board-settings-folder__change:active {
-  background: #ededee;
+  background: var(--desk-hover, #ededee);
 }
 
 .board-settings-folder__change:disabled {
@@ -452,7 +478,7 @@
 
 .board-dashboard__section-header p {
   margin: 5px 0 0;
-  color: #777;
+  color: var(--desk-muted, #777);
   font-size: 13px;
 }
 
@@ -460,9 +486,9 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--desk-border, #e4e4e7);
   border-radius: 12px;
-  background: #fff;
+  background: var(--desk-surface, #fff);
 }
 
 .board-dashboard__recent-item {
@@ -472,10 +498,10 @@
   box-sizing: border-box;
   gap: 12px;
   border: 0;
-  border-bottom: 1px solid #ededee;
+  border-bottom: 1px solid var(--desk-border, #ededee);
   padding: 13px 15px;
-  background: #fff;
-  color: #1f1f1f;
+  background: var(--desk-surface, #fff);
+  color: var(--desk-text, #1f1f1f);
   text-align: left;
   cursor: pointer;
 }
@@ -485,11 +511,11 @@
 }
 
 .board-dashboard__recent-item:hover {
-  background: #f7f7f8;
+  background: var(--desk-page, #f7f7f8);
 }
 
 .board-dashboard__recent-item--missing {
-  color: #888;
+  color: var(--desk-faint, #888);
 }
 
 .board-dashboard__recent-icon {
@@ -500,8 +526,8 @@
   justify-content: center;
   flex: 0 0 auto;
   border-radius: 8px;
-  background: #f1f1f3;
-  color: #6965db;
+  background: var(--desk-hover, #f1f1f3);
+  color: var(--desk-primary-text, #6965db);
   font-size: 16px;
 }
 
@@ -523,7 +549,7 @@
 
 .board-dashboard__recent-path {
   overflow: hidden;
-  color: #888;
+  color: var(--desk-faint, #888);
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -536,7 +562,7 @@
 
 .board-dashboard__recent-time {
   flex: 0 0 auto;
-  color: #999;
+  color: var(--desk-faint, #999);
   font-size: 12px;
 }
 
@@ -547,11 +573,11 @@
 .board-dashboard__missing-path {
   overflow-wrap: anywhere;
   margin-top: 14px;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--desk-border, #e4e4e7);
   border-radius: 8px;
   padding: 10px 12px;
-  background: #f7f7f8;
-  color: #666;
+  background: var(--desk-page, #f7f7f8);
+  color: var(--desk-muted, #666);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
   line-height: 1.45;
@@ -574,7 +600,7 @@
 }
 
 .board-card:hover {
-  border-color: #d4d4dc;
+  border-color: var(--desk-border, #d4d4dc);
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
 }
 
@@ -927,7 +953,7 @@
   align-self: start;
   width: fit-content;
   height: 40px;
-  background: var(--island-bg-color, #fff);
+  background: var(--island-bg-color, var(--desk-surface, #fff));
 }
 
 .board-dashboard__board-controls > div[role="group"] > button {
@@ -946,7 +972,7 @@
 .board-dashboard__board-controls
   > div[role="group"]
   > button[aria-pressed="false"] {
-  color: var(--text-primary-color, #333);
+  color: var(--text-primary-color, var(--desk-text, #333));
 }
 
 .board-dashboard__recent-list {
@@ -963,7 +989,7 @@
 
 .board-card__preview-button {
   overflow: hidden;
-  background: #fff;
+  background: var(--desk-surface, #fff);
 }
 
 .board-card__content {
@@ -1232,10 +1258,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #d9d9df;
+  border: 1px solid var(--desk-border, #d9d9df);
   border-radius: 8px;
-  background: #fff;
-  color: #27272a;
+  background: var(--desk-surface, #fff);
+  color: var(--desk-text, #27272a);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
@@ -1243,8 +1269,8 @@
 }
 
 .board-dashboard__header-actions .board-dashboard__secondary-button:hover {
-  border-color: #c8c8d0;
-  background: #f5f5f7;
+  border-color: var(--desk-border-strong, #c8c8d0);
+  background: var(--desk-subtle, #f5f5f7);
 }
 
 .board-dashboard__header-actions .board-dashboard__primary-button {
@@ -1264,8 +1290,8 @@
   width: 44px;
   min-width: 44px;
   padding: 0;
-  border: 1px solid #d9d9df;
-  background: #fff;
+  border: 1px solid var(--desk-border, #d9d9df);
+  background: var(--desk-surface, #fff);
 }
 
 @media (max-width: 640px) {
