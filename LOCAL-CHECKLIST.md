@@ -13,12 +13,12 @@ Branch with the changes: `claude/happy-thompson-hrxcmu`
   git pull
   yarn install
   ```
-- [ ] Start the app the way you usually do. The repo has no launch script; `electron/main.cjs` loads `http://localhost:3001`, so it is presumably:
+- [ ] Start the app with the new one-command launcher:
   ```bash
-  yarn start          # terminal 1: dev server on port 3001
-  npx electron .      # terminal 2: desktop window
+  yarn desktop
   ```
-  If you launch it differently, tell me how, so I can add a script for it.
+  It starts the dev server (or reuses one already running on port 3001) and opens the desktop window. Closing the window also stops the dev server it started. The first run may download the Electron binary.
+- [ ] Check that this works on your system (Windows / Linux / Mac — whichever you use). If it fails, send me the terminal output.
 
 ## 1. Desktop app still works (quick regression check)
 
