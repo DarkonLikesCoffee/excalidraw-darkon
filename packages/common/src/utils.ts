@@ -144,7 +144,11 @@ export const getFontFamilyString = ({
   }
   const personalFamily = personalFontFamilies.get(fontFamily);
   if (personalFamily) {
-    return `${personalFamily}, sans-serif, ${WINDOWS_EMOJI_FALLBACK_FONT}`;
+    // personal family names come from font file names and may contain
+    // spaces, digits or punctuation, which are invalid unquoted in the CSS
+    // `font` shorthand (making canvas ignore the whole font string)
+    const quotedFamily = `"${personalFamily.replace(/["\\]/g, "\\$&")}"`;
+    return `${quotedFamily}, sans-serif, ${WINDOWS_EMOJI_FALLBACK_FONT}`;
   }
   return WINDOWS_EMOJI_FALLBACK_FONT;
 };

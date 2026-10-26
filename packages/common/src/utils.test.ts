@@ -1,4 +1,5 @@
 import {
+  getFontFamilyString,
   getNearestScrollableContainer,
   isInputLike,
   isInteractive,
@@ -7,6 +8,8 @@ import {
   isWritableElement,
   mapFind,
   reduceToCommonValue,
+  registerPersonalFontFamily,
+  unregisterPersonalFontFamily,
 } from "@excalidraw/common";
 import { vi } from "vitest";
 
@@ -16,6 +19,28 @@ import { throttleRAF } from "./utils";
 type RafCallback = FrameRequestCallback;
 
 describe("@excalidraw/common/utils", () => {
+  describe("getFontFamilyString with personal fonts", () => {
+    afterEach(() => {
+      unregisterPersonalFontFamily(1001);
+    });
+
+    it("quotes the family name so it is valid in the CSS font shorthand", () => {
+      registerPersonalFontFamily(1001, "Lato 300");
+
+      expect(getFontFamilyString({ fontFamily: 1001 })).toMatch(
+        /^"Lato 300", sans-serif, /,
+      );
+    });
+
+    it("escapes quotes and backslashes in the family name", () => {
+      registerPersonalFontFamily(1001, 'My "Fancy" \\ Font');
+
+      expect(getFontFamilyString({ fontFamily: 1001 })).toMatch(
+        /^"My \\"Fancy\\" \\\\ Font", sans-serif, /,
+      );
+    });
+  });
+
   describe("cross-document element guards", () => {
     it("uses constructors from the target element's window", () => {
       const iframe = document.createElement("iframe");

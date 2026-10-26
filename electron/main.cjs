@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const boardStorage = require("./storage/boards.cjs");
+const personalFonts = require("./storage/personalFonts.cjs");
 
 let boardsWatcher = null;
 let boardsWatchTimer = null;
@@ -105,48 +106,14 @@ ipcMain.handle("boards:choose-folder", async () => {
   if (result.canceled || result.filePaths.length === 0) return null;
   return result.filePaths[0];
 });
-ipcMain.handle("personal-fonts:list", () => {
-  const folder = path.join(app.getPath("userData"), "personal-fonts");
-  fs.mkdirSync(folder, { recursive: true });
-  let fonts = [];
-  try { fonts = JSON.parse(fs.readFileSync(path.join(folder, "fonts.json"), "utf8")); } catch {}
-  return fonts.filter((font) => fs.existsSync(path.join(folder, font.fileName))).map((font) => ({
-    id: font.id, family: font.family, dataUrl: fs.readFileSync(path.join(folder, font.fileName)).toString("base64"), format: font.format,
-  }));
-});
+const getPersonalFontsFolder = () => path.join(app.getPath("userData"), "personal-fonts");
+ipcMain.handle("personal-fonts:list", () => personalFonts.listFonts(getPersonalFontsFolder()));
 ipcMain.handle("personal-fonts:import", async () => {
   const result = await dialog.showOpenDialog({ title: "Import Font", properties: ["openFile"], filters: [{ name: "Font files", extensions: ["ttf", "otf", "woff", "woff2"] }] });
   if (result.canceled || !result.filePaths.length) return null;
-  const source = result.filePaths[0];
-  if (fs.statSync(source).size > 20 * 1024 * 1024) throw new Error("Font files must be 20 MB or smaller.");
-  const extension = path.extname(source).toLowerCase();
-  const format = ({ ".ttf": "truetype", ".otf": "opentype", ".woff": "woff", ".woff2": "woff2" })[extension];
-  if (!format) throw new Error("Unsupported font format.");
-  const folder = path.join(app.getPath("userData"), "personal-fonts");
-  fs.mkdirSync(folder, { recursive: true });
-  const manifestPath = path.join(folder, "fonts.json");
-  let fonts = [];
-  try { fonts = JSON.parse(fs.readFileSync(manifestPath, "utf8")); } catch {}
-  const family = path.basename(source, extension).replace(/[-_]+/g, " ").trim() || "Custom Font";
-  const id = Math.max(1001, ...fonts.map((font) => font.id + 1));
-  const fileName = `font-${id}${extension}`;
-  fs.copyFileSync(source, path.join(folder, fileName));
-  const font = { id, family, fileName, format };
-  fonts.push(font);
-  fs.writeFileSync(manifestPath, JSON.stringify(fonts, null, 2));
-  return { id, family, dataUrl: fs.readFileSync(path.join(folder, fileName)).toString("base64"), format };
+  return personalFonts.importFont(getPersonalFontsFolder(), result.filePaths[0]);
 });
-ipcMain.handle("personal-fonts:remove", (_, id) => {
-  const folder = path.join(app.getPath("userData"), "personal-fonts");
-  const manifestPath = path.join(folder, "fonts.json");
-  let fonts = [];
-  try { fonts = JSON.parse(fs.readFileSync(manifestPath, "utf8")); } catch {}
-  const font = fonts.find((item) => item.id === id);
-  if (!font) return false;
-  try { fs.unlinkSync(path.join(folder, font.fileName)); } catch {}
-  fs.writeFileSync(manifestPath, JSON.stringify(fonts.filter((item) => item.id !== id), null, 2));
-  return true;
-});
+ipcMain.handle("personal-fonts:remove", (_, id) => personalFonts.removeFont(getPersonalFontsFolder(), id));
 ipcMain.handle("boards:get-thumbnail", (_, id) => boardStorage.getThumbnail(id));
 ipcMain.handle("boards:save-thumbnail", (_, id, dataUrl) => boardStorage.saveThumbnail(id, dataUrl));
 
