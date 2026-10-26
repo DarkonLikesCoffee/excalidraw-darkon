@@ -12,7 +12,7 @@ const path = require("path");
 const { spawn } = require("child_process");
 
 const rootDir = path.join(__dirname, "..");
-// must match the URL loaded in electron/main.cjs (VITE_APP_PORT in .env.development)
+// passed to electron/main.cjs (port: VITE_APP_PORT in .env.development)
 const DEV_SERVER_URL = "http://localhost:3001";
 const DEV_SERVER_PORT = new URL(DEV_SERVER_URL).port;
 const DEV_SERVER_TIMEOUT_MS = 120_000;
@@ -86,6 +86,7 @@ const main = async () => {
   const electronPath = require("electron");
   const app = spawn(electronPath, [rootDir, ...process.argv.slice(2)], {
     stdio: "inherit",
+    env: { ...process.env, EXCALIDRAW_DEV_SERVER_URL: DEV_SERVER_URL },
   });
 
   app.on("exit", (code) => {

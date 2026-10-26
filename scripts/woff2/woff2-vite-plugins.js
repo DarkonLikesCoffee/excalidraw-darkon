@@ -5,9 +5,11 @@ const OSS_FONTS_FALLBACK = "/";
 /**
  * Custom vite plugin for auto-prefixing `EXCALIDRAW_ASSET_PATH` woff2 fonts in `excalidraw-app`.
  *
+ * @param {{ localFonts?: boolean }} options `localFonts` serves all fonts from
+ * the app itself instead of the CDN (desktop build, which must work offline)
  * @returns {import("vite").PluginOption}
  */
-module.exports.woff2BrowserPlugin = () => {
+module.exports.woff2BrowserPlugin = ({ localFonts = false } = {}) => {
   let isDev;
 
   return {
@@ -17,6 +19,19 @@ module.exports.woff2BrowserPlugin = () => {
       isDev = command === "serve";
     },
     transform(code, id) {
+      if (localFonts) {
+        if (!isDev && id.endsWith("excalidraw-app/index.html")) {
+          return code.replace(
+            "<!-- PLACEHOLDER:EXCALIDRAW_APP_FONTS -->",
+            `<script>
+        window.EXCALIDRAW_ASSET_PATH = window.origin;
+      </script>`,
+          );
+        }
+        // keep the UI fonts in fonts.css pointing to the bundled files
+        return;
+      }
+
       // using copy / replace as fonts defined in the `.css` don't have to be manually copied over (vite/rollup does this automatically),
       // but at the same time can't be easily prefixed with the `EXCALIDRAW_ASSET_PATH` only for the `excalidraw-app`
       if (!isDev && id.endsWith("/excalidraw/fonts/fonts.css")) {

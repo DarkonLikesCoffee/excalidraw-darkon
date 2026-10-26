@@ -65,6 +65,8 @@
     "build": "yarn --cwd ./excalidraw-app build",
     "build:preview": "yarn --cwd ./excalidraw-app build:preview",
     "desktop": "node ./scripts/desktop.js",
+    "desktop:build": "cross-env VITE_APP_DESKTOP=true VITE_APP_DISABLE_SENTRY=true yarn --cwd ./excalidraw-app vite build",
+    "desktop:start": "electron .",
     "start": "yarn --cwd ./excalidraw-app start",
     "start:production": "yarn --cwd ./excalidraw-app start:production",
     "start:example": "yarn build:packages && yarn --cwd ./examples/with-script-in-browser start",

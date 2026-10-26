@@ -1,8 +1,32 @@
 const fs = require("fs");
 const path = require("path");
-const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
+const { pathToFileURL } = require("url");
+const { app, BrowserWindow, ipcMain, Menu, dialog, protocol, net } = require("electron");
 const boardStorage = require("./storage/boards.cjs");
 const personalFonts = require("./storage/personalFonts.cjs");
+
+// `yarn desktop` points the window at the Vite dev server; otherwise the
+// production build (excalidraw-app/build) is served from disk via app://.
+const DEV_SERVER_URL = process.env.EXCALIDRAW_DEV_SERVER_URL || null;
+const APP_ORIGIN = "app://excalidraw";
+const BUILD_DIR = path.join(__dirname, "..", "excalidraw-app", "build");
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+]);
+
+function serveBuild() {
+  protocol.handle("app", (request) => {
+    const { pathname } = new URL(request.url);
+    const filePath = path.normalize(path.join(BUILD_DIR, decodeURIComponent(pathname)));
+    if (filePath !== BUILD_DIR && !filePath.startsWith(BUILD_DIR + path.sep)) {
+      return new Response("Not found", { status: 404 });
+    }
+    // unknown paths fall back to the app's entry point
+    const target = fs.existsSync(filePath) && fs.statSync(filePath).isFile() ? filePath : path.join(BUILD_DIR, "index.html");
+    return net.fetch(pathToFileURL(target).toString());
+  });
+}
 
 let boardsWatcher = null;
 let boardsWatchTimer = null;
@@ -136,10 +160,18 @@ function createWindow() {
   win.webContents.on("before-input-event", (event, input) => {
     if (input.type === "keyDown" && input.control && input.shift && input.key.toLowerCase() === "i") win.webContents.toggleDevTools();
   });
-  win.loadURL("http://localhost:3001");
+  win.loadURL(DEV_SERVER_URL || `${APP_ORIGIN}/`);
 }
 
 app.whenReady().then(() => {
+  if (!DEV_SERVER_URL) {
+    if (!fs.existsSync(path.join(BUILD_DIR, "index.html"))) {
+      dialog.showErrorBox("Excalidraw Custom", `The app has not been built yet (missing ${BUILD_DIR}).\n\nRun "yarn desktop:build", or "yarn desktop" for development.`);
+      app.quit();
+      return;
+    }
+    serveBuild();
+  }
   Menu.setApplicationMenu(null);
   boardStorage.initializeStorage(app.getPath("userData"));
   startBoardsWatcher();

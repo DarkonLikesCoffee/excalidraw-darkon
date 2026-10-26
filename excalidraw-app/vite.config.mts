@@ -139,7 +139,9 @@ export default defineConfig(({ mode }) => {
         // its static in public folder
         generateRobotsTxt: false,
       }),
-      woff2BrowserPlugin(),
+      woff2BrowserPlugin({
+        localFonts: envVars.VITE_APP_DESKTOP === "true",
+      }),
       react(),
       checker({
         typescript: true,
@@ -155,6 +157,8 @@ export default defineConfig(({ mode }) => {
       svgrPlugin(),
       ViteEjsPlugin(),
       VitePWA({
+        // the desktop app loads its files from disk, no offline cache needed
+        disable: envVars.VITE_APP_DESKTOP === "true",
         registerType: "autoUpdate",
         devOptions: {
           /* set this flag to true to enable in Development mode */
