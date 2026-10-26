@@ -34,6 +34,15 @@ function getNextFontId(fonts) {
   return Math.max(FIRST_FONT_ID, ...fonts.map((font) => font.id + 1));
 }
 
+// Keep display names distinct so the font picker can tell fonts apart
+// ("Lato", "Lato 2", ...).
+function getUniqueFamily(fonts, family) {
+  const taken = new Set(fonts.filter((font) => !font.removed).map((font) => font.family.toLowerCase()));
+  let candidate = family;
+  for (let suffix = 2; taken.has(candidate.toLowerCase()); suffix++) candidate = `${family} ${suffix}`;
+  return candidate;
+}
+
 function toRendererFont(folder, font) {
   return {
     id: font.id,
@@ -57,7 +66,7 @@ function importFont(folder, source) {
   if (!format) throw new Error("Unsupported font format.");
   fs.mkdirSync(folder, { recursive: true });
   const fonts = readManifest(folder);
-  const family = path.basename(source, path.extname(source)).replace(/[-_]+/g, " ").trim() || "Custom Font";
+  const family = getUniqueFamily(fonts, path.basename(source, path.extname(source)).replace(/[-_]+/g, " ").trim() || "Custom Font");
   const id = getNextFontId(fonts);
   const fileName = `font-${id}${extension}`;
   fs.copyFileSync(source, path.join(folder, fileName));

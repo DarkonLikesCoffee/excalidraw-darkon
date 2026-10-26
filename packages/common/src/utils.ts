@@ -130,6 +130,21 @@ export const unregisterPersonalFontFamily = (id: number) => {
   personalFontFamilies.delete(id);
 };
 
+/** user-facing name of a personal font (e.g. for the font picker) */
+export const getPersonalFontFamilyName = (id: number) =>
+  personalFontFamilies.get(id);
+
+/**
+ * Unique family name a personal font is registered under in the document.
+ * Display names can repeat (e.g. two "Lato" files), so they can't identify
+ * the font face without text in one font rendering with the other.
+ */
+export const getPersonalFontCssFamily = (id: number) =>
+  `ExcalidrawPersonalFont-${id}`;
+
+const quoteFontFamily = (family: string) =>
+  `"${family.replace(/["\\]/g, "\\$&")}"`;
+
 export const getFontFamilyString = ({
   fontFamily,
 }: {
@@ -144,11 +159,15 @@ export const getFontFamilyString = ({
   }
   const personalFamily = personalFontFamilies.get(fontFamily);
   if (personalFamily) {
-    // personal family names come from font file names and may contain
-    // spaces, digits or punctuation, which are invalid unquoted in the CSS
-    // `font` shorthand (making canvas ignore the whole font string)
-    const quotedFamily = `"${personalFamily.replace(/["\\]/g, "\\$&")}"`;
-    return `${quotedFamily}, sans-serif, ${WINDOWS_EMOJI_FALLBACK_FONT}`;
+    // family names come from font file names and may contain spaces, digits
+    // or punctuation, which are invalid unquoted in the CSS `font` shorthand
+    // (making canvas ignore the whole font string). The display name is kept
+    // as a fallback for SVG exports viewed where the font is installed.
+    return `${quoteFontFamily(
+      getPersonalFontCssFamily(fontFamily),
+    )}, ${quoteFontFamily(
+      personalFamily,
+    )}, sans-serif, ${WINDOWS_EMOJI_FALLBACK_FONT}`;
   }
   return WINDOWS_EMOJI_FALLBACK_FONT;
 };

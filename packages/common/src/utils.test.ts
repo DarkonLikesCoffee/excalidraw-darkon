@@ -1,6 +1,7 @@
 import {
   getFontFamilyString,
   getNearestScrollableContainer,
+  getPersonalFontFamilyName,
   isInputLike,
   isInteractive,
   isToolIcon,
@@ -22,21 +23,32 @@ describe("@excalidraw/common/utils", () => {
   describe("getFontFamilyString with personal fonts", () => {
     afterEach(() => {
       unregisterPersonalFontFamily(1001);
+      unregisterPersonalFontFamily(1002);
     });
 
-    it("quotes the family name so it is valid in the CSS font shorthand", () => {
+    it("uses the unique family first and quotes all family names", () => {
       registerPersonalFontFamily(1001, "Lato 300");
 
       expect(getFontFamilyString({ fontFamily: 1001 })).toMatch(
-        /^"Lato 300", sans-serif, /,
+        /^"ExcalidrawPersonalFont-1001", "Lato 300", sans-serif, /,
+      );
+      expect(getPersonalFontFamilyName(1001)).toBe("Lato 300");
+    });
+
+    it("keeps fonts with the same display name apart", () => {
+      registerPersonalFontFamily(1001, "Lato");
+      registerPersonalFontFamily(1002, "Lato");
+
+      expect(getFontFamilyString({ fontFamily: 1001 })).not.toBe(
+        getFontFamilyString({ fontFamily: 1002 }),
       );
     });
 
     it("escapes quotes and backslashes in the family name", () => {
       registerPersonalFontFamily(1001, 'My "Fancy" \\ Font');
 
-      expect(getFontFamilyString({ fontFamily: 1001 })).toMatch(
-        /^"My \\"Fancy\\" \\\\ Font", sans-serif, /,
+      expect(getFontFamilyString({ fontFamily: 1001 })).toContain(
+        ', "My \\"Fancy\\" \\\\ Font", sans-serif, ',
       );
     });
   });

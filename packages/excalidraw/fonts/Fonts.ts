@@ -6,6 +6,7 @@ import {
   getFontFamilyFallbacks,
   registerPersonalFontFamily,
   unregisterPersonalFontFamily,
+  getPersonalFontCssFamily,
   FONT_SIZES,
 } from "@excalidraw/common";
 import { getContainerElement } from "@excalidraw/element";
@@ -94,7 +95,7 @@ export class Fonts {
     }
     registerPersonalFontFamily(font.id, font.family);
     const face = new ExcalidrawFontFace(
-      font.family,
+      getPersonalFontCssFamily(font.id),
       `data:font/${font.format};base64,${font.dataUrl}`,
     );
     Fonts.registered.set(font.id, {
@@ -121,8 +122,12 @@ export class Fonts {
 
   public static unregisterPersonalFont(id: number) {
     const registered = Fonts.registered.get(id);
-    if (!registered?.metadata.local) return;
-    registered.fontFaces.forEach(({ fontFace }) => document.fonts.delete(fontFace));
+    if (!registered?.metadata.local) {
+      return;
+    }
+    registered.fontFaces.forEach(({ fontFace }) =>
+      document.fonts.delete(fontFace),
+    );
     Fonts.registered.delete(id);
     unregisterPersonalFontFamily(id);
   }

@@ -14,6 +14,7 @@ import {
   debounce,
   FONT_FAMILY,
   getFontFamilyString,
+  getPersonalFontFamilyName,
 } from "@excalidraw/common";
 
 import type { ValueOf } from "@excalidraw/common/utility-types";
@@ -93,6 +94,8 @@ const getFontFamilyLabel = (
 ) =>
   // prefer our config as the browser resolved names may be wrapped in quotes and such
   Object.entries(FONT_FAMILY).find(([, id]) => id === fontFamily)?.[0] ??
+  // personal fonts are registered under an internal unique family name
+  getPersonalFontFamilyName(fontFamily) ??
   fontFaces[0]?.fontFace?.family ??
   "Unknown";
 

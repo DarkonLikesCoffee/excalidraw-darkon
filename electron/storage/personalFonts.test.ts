@@ -52,6 +52,28 @@ describe("personal font library", () => {
     );
   });
 
+  it("gives fonts with the same name distinct display names", () => {
+    fs.mkdirSync(path.join(root, "other"));
+    const first = personalFonts.importFont(folder, createFontFile("Lato.ttf"));
+    const second = personalFonts.importFont(
+      folder,
+      createFontFile(path.join("other", "lato.otf")),
+    );
+    const third = personalFonts.importFont(folder, createFontFile("Lato.woff"));
+
+    expect([first.family, second.family, third.family]).toEqual([
+      "Lato",
+      "lato 2",
+      "Lato 3",
+    ]);
+
+    // a removed font's name becomes available again
+    personalFonts.removeFont(folder, first.id);
+    expect(
+      personalFonts.importFont(folder, createFontFile("Lato.woff2")).family,
+    ).toBe("Lato");
+  });
+
   it("never reuses the id of a removed font", () => {
     personalFonts.importFont(folder, createFontFile("A.ttf"));
     const removed = personalFonts.importFont(folder, createFontFile("B.ttf"));
