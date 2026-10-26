@@ -526,13 +526,26 @@ export class Fonts {
   /**
    * Get all the unique font families for the given elements.
    */
+  /**
+   * Families without a registered font (e.g. a removed personal font) are
+   * rendered with Excalifont (see `getFontFamilyString`), so load and inline
+   * Excalifont for them.
+   */
+  private static resolveFamily(
+    fontFamily: ExcalidrawTextElement["fontFamily"],
+  ): ExcalidrawTextElement["fontFamily"] {
+    return Fonts.registered.has(fontFamily)
+      ? fontFamily
+      : FONT_FAMILY.Excalifont;
+  }
+
   private static getUniqueFamilies(
     elements: ReadonlyArray<ExcalidrawElement>,
   ): Array<ExcalidrawTextElement["fontFamily"]> {
     return Array.from(
       elements.reduce((families, element) => {
         if (isTextElement(element)) {
-          families.add(element.fontFamily);
+          families.add(Fonts.resolveFamily(element.fontFamily));
         }
         return families;
       }, new Set<number>()),
@@ -552,13 +565,15 @@ export class Fonts {
         continue;
       }
 
+      const fontFamily = Fonts.resolveFamily(element.fontFamily);
+
       // gather unique codepoints only when inlining fonts
       for (const char of element.originalText) {
-        if (!charsPerFamily[element.fontFamily]) {
-          charsPerFamily[element.fontFamily] = new Set();
+        if (!charsPerFamily[fontFamily]) {
+          charsPerFamily[fontFamily] = new Set();
         }
 
-        charsPerFamily[element.fontFamily].add(char);
+        charsPerFamily[fontFamily].add(char);
       }
     }
 

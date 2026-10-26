@@ -27,12 +27,7 @@ These need native file dialogs, a real window manager or your own data.
 - [ ] **Export dialogs:** export a board with custom-font text as **SVG** and as **PNG**, once in light and once in dark mode. Open the SVG in a web browser: the text keeps the custom font and the colors match the canvas.
 - [ ] **Window buttons:** minimize, maximize/restore and close in the title bar work.
 
-## 2. Your opinion
-
-- [ ] **Font picker buttons:** look at the "Import font…" / "Remove selected" buttons (screenshot in our conversation) and tell me what should change, if anything.
-- [ ] **Missing fonts:** text whose font was removed currently falls back to the browser's default serif font. Should it fall back to the regular default font (Excalifont) instead?
-
-## 3. What to send back
+## 2. What to send back
 
 - Which boxes failed, with a screenshot or a short description each.
 - Any error shown in the app (DevTools: `Ctrl+Shift+I` → Console).
@@ -45,4 +40,4 @@ Checked in the real Electron app (Linux, virtual display), driven by a script:
 - **Boards:** create, draw, autosave to the `.excalidraw` file, back to the dashboard (title bar button), reopen, full restart and reopen; recent list and thumbnails update.
 - **Dark mode:** typing `00FF00` keeps `00ff00` in the hex box and draws exactly `#00ff00`; the eyedropper picks exactly `#00ff00`; colored text keeps its exact color while editing; hollow arrowheads match the dark background.
 - **Canvas background in dark mode** (expected limitation of the themed background): very bright colors can't be shown exactly; picking `#00FF00` for the background shows the closest possible green (`#37b637`, stored as `#009400`).
-- **Fonts:** imported fonts (incl. names like "Lato 300", `.ttf` and `.otf`) render correctly and survive a full restart; two fonts with the same file name show as "Lato" / "Lato 2" and render differently; picking a font in the picker works and is saved; the selection box is centered on custom-font text; after removing a font and importing another, old text does not switch to the new font.
+- **Fonts:** imported fonts (incl. names like "Lato 300", `.ttf` and `.otf`) render correctly and survive a full restart; two fonts with the same file name show as "Lato" / "Lato 2" and render differently; picking a font in the picker works and is saved; the selection box is centered on custom-font text; after removing a font and importing another, old text does not switch to the new font; text whose font is missing falls back to Excalifont.

@@ -149,7 +149,7 @@ export const getFontFamilyString = ({
   fontFamily,
 }: {
   fontFamily: FontFamilyValues;
-}) => {
+}): string => {
   for (const [fontFamilyString, id] of Object.entries(FONT_FAMILY)) {
     if (id === fontFamily) {
       return `${fontFamilyString}${getFontFamilyFallbacks(id)
@@ -169,7 +169,9 @@ export const getFontFamilyString = ({
       personalFamily,
     )}, sans-serif, ${WINDOWS_EMOJI_FALLBACK_FONT}`;
   }
-  return WINDOWS_EMOJI_FALLBACK_FONT;
+  // unknown family (e.g. a removed or not yet imported personal font):
+  // render with Excalifont rather than the browser's default (serif) font
+  return getFontFamilyString({ fontFamily: FONT_FAMILY.Excalifont });
 };
 
 /** returns fontSize+fontFamily string for assignment to DOM elements */

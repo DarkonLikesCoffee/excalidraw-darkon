@@ -1,4 +1,5 @@
 import {
+  FONT_FAMILY,
   getFontFamilyString,
   getNearestScrollableContainer,
   getPersonalFontFamilyName,
@@ -33,6 +34,12 @@ describe("@excalidraw/common/utils", () => {
         /^"ExcalidrawPersonalFont-1001", "Lato 300", sans-serif, /,
       );
       expect(getPersonalFontFamilyName(1001)).toBe("Lato 300");
+    });
+
+    it("falls back to Excalifont for unknown (e.g. removed) fonts", () => {
+      expect(getFontFamilyString({ fontFamily: 1999 })).toBe(
+        getFontFamilyString({ fontFamily: FONT_FAMILY.Excalifont }),
+      );
     });
 
     it("keeps fonts with the same display name apart", () => {

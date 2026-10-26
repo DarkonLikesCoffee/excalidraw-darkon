@@ -76,6 +76,31 @@ describe("personal fonts in SVG export", () => {
     );
   }, 30_000);
 
+  it("exports text with a missing font in Excalifont", async () => {
+    const text = API.createElement({
+      type: "text",
+      text: "Hello",
+      fontFamily: 1999 as ExcalidrawTextElement["fontFamily"],
+    });
+
+    const svg = await exportUtils.exportToSvg(
+      [text],
+      {
+        exportBackground: false,
+        viewBackgroundColor: "#ffffff",
+        exportWithDarkMode: false,
+      },
+      null,
+    );
+
+    expect(svg.querySelector("text")?.getAttribute("font-family")).toMatch(
+      /^Excalifont, /,
+    );
+    expect(svg.querySelector("style.style-fonts")?.textContent).toContain(
+      "font-family: Excalifont;",
+    );
+  }, 30_000);
+
   it("embeds woff (1.0) fonts whole, labelled with their format", async () => {
     const woff = new Uint8Array([
       ..."wOFF".split("").map((char) => char.charCodeAt(0)),
