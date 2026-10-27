@@ -412,7 +412,10 @@ const ExcalidrawWrapper = ({
   const excalidrawAPI = useExcalidrawAPI();
 
   const [errorMessage, setErrorMessage] = useState("");
-  const isCollabDisabled = isRunningInIframe();
+  // The desktop app keeps boards local: no live collaboration or shareable
+  // links, which upload the scene to excalidraw.com servers.
+  const isDesktopApp = Boolean(window.boardStorage);
+  const isCollabDisabled = isRunningInIframe() || isDesktopApp;
 
   const { editorTheme, appTheme, setAppTheme } = useHandleAppTheme();
 
@@ -1325,7 +1328,7 @@ const ExcalidrawWrapper = ({
           canvasActions: {
             toggleTheme: true,
             export: {
-              onExportToBackend,
+              onExportToBackend: isDesktopApp ? undefined : onExportToBackend,
               renderCustomUI: excalidrawAPI
                 ? (elements, appState, files) => {
                     return (
@@ -1491,6 +1494,7 @@ const ExcalidrawWrapper = ({
             {
               label: t("labels.liveCollaboration"),
               category: DEFAULT_CATEGORIES.app,
+              predicate: !isCollabDisabled,
               keywords: [
                 "team",
                 "multiplayer",
@@ -1532,7 +1536,7 @@ const ExcalidrawWrapper = ({
             {
               label: t("labels.share"),
               category: DEFAULT_CATEGORIES.app,
-              predicate: true,
+              predicate: !isDesktopApp,
               icon: share,
               keywords: [
                 "link",
