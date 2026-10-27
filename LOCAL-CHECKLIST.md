@@ -28,10 +28,17 @@ Not recorded:
 - **Operating system** used for these checks.
 - **Offline use of the installed app** (starting it with the internet turned off): not explicitly confirmed.
 
-Not checked on your machine, because they were added after your check:
+After the merge into `main`, you reported that you tested the final version following the local guide and that it looks fine. The guide covered:
 
-- The single-instance lock (a second launch focuses the running app instead of opening another window).
-- Packaging with publishing disabled (`"publish": null`).
+- [x] Pulling `main` and installing dependencies.
+- [x] **Single-instance lock** with `yarn desktop`: a second launch focuses the running window instead of opening another one (including when minimized).
+- [x] **Packaging** with `yarn desktop:dist` (publishing disabled: no `latest*.yml` files).
+- [x] **Installed app without the dev server:** runs from `app://excalidraw/`, shows Settings → About 0.1.0, boards and custom fonts work, and a second launch (also while `yarn desktop` runs) focuses the existing window.
+
+Not checked on your machine, because they were added after your checks:
+
+- Links open in the default browser (links in drawings, menu and help links).
+- Live collaboration and shareable links are hidden in the desktop app.
 
 ## Checked by Claude in the cloud
 
@@ -41,7 +48,8 @@ Run in the real Electron app on Linux (virtual display, no window manager), driv
 - **Production build:** `yarn desktop:dist` produces an AppImage that runs without a dev server, loads the boards and custom fonts from the same data folder, and makes no network requests (in the cloud, with outbound access to other hosts blocked).
 - **Single instance:** with one instance open, a second launch exits within seconds without opening a window, and the running window receives the event and ends up visible and focused. Checked for: development + production build, production build + development (`yarn desktop` also stops the dev server it started), AppImage + AppImage, development + AppImage. Restoring a _minimized_ window could not be checked (no window manager in the cloud).
 - **Publishing disabled:** with `"publish": null`, packaging succeeds and no `app-update.yml` / `latest-linux.yml` is generated.
-- **Links opened in new windows:** external pages opened from the app do not get access to the desktop APIs (`boardStorage`, `windowControls`).
+- **Links:** with `yarn desktop` and the AppImage, clicking a link in a drawing, opening a `_blank` link and navigating the main window away all hand the URL to the default browser (recorded instead of launched in the cloud); no extra window stays open and the app stays on its page. `file:` links are not opened, and the temporary blank window they leave is closed after 5 seconds. (Before this change, external pages opened in an app window without access to the desktop APIs.)
+- **No collaboration / share links:** in the desktop app (development and AppImage) there is no live collaboration button or menu item, "Save to..." has no "Shareable link" option, and the command palette has no "Live collaboration" or "Share" commands. The browser version is unchanged.
 - **Dashboard dark mode:** the dashboard, its dialogs and menus and the title bar follow the editor theme (also when toggled inside the editor); the light theme is pixel-identical to before.
 - **Icon and version:** the AppImage uses `electron/icon.png`; Settings → About shows the version from `package.json` (also in the packaged app).
 - **Boards:** create, draw, autosave to the `.excalidraw` file, back to the dashboard, reopen, full restart and reopen; recent list and thumbnails update.
@@ -52,4 +60,5 @@ Run in the real Electron app on Linux (virtual display, no window manager), driv
 
 - **Canvas background in dark mode:** very bright colors can't be shown exactly on the themed background; picking `#00FF00` for the background shows the closest possible green (`#37b637`, stored as `#009400`).
 - **Separate browser storage:** the installed app and `yarn desktop` keep their own theme and shape library; boards, custom fonts, settings and recent boards are shared (same data folder).
-- **Unsigned packages:** Windows (SmartScreen) and macOS (Gatekeeper) warn on first launch; Windows and macOS packages must be built on those systems.
+- **Unsigned packages:** Windows (SmartScreen) and macOS (Gatekeeper) warn on first launch; Windows and macOS packages must be built on those systems. Code signing was decided against (the app is for you and a few friends).
+- **Excalidraw+:** "Save to..." → Excalidraw+ and the Excalidraw+ menu links remain; exporting there uploads to an Excalidraw+ account (only when signed in).
