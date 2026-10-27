@@ -6,6 +6,8 @@ import {
 import { LinkButton } from "@excalidraw/excalidraw/components/LinkButton";
 import { useUIAppState } from "@excalidraw/excalidraw/context/ui-appState";
 
+import { isDesktopApp } from "../app_constants";
+
 import "./AppSidebar.scss";
 
 type SidebarPromoCopyProps = {
@@ -67,6 +69,11 @@ const SidebarPromoCopy = (props: SidebarPromoCopyProps) => {
 
 export const AppSidebar = () => {
   const { theme, openSidebar } = useUIAppState();
+
+  // the extra tabs only promote Excalidraw+ features
+  if (isDesktopApp) {
+    return <DefaultSidebar />;
+  }
 
   return (
     <DefaultSidebar>

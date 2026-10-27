@@ -59,3 +59,10 @@ export const COOKIES = {
 export const isExcalidrawPlusSignedUser = document.cookie.includes(
   COOKIES.AUTH_STATE_COOKIE,
 );
+
+/**
+ * Running in the Electron desktop app (its preload exposes `boardStorage`).
+ * The desktop app keeps boards local: no collaboration, shareable links or
+ * Excalidraw+.
+ */
+export const isDesktopApp = Boolean(window.boardStorage);

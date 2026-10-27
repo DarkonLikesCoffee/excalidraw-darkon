@@ -93,6 +93,7 @@ import {
 import {
   FIREBASE_STORAGE_PREFIXES,
   isExcalidrawPlusSignedUser,
+  isDesktopApp,
   STORAGE_KEYS,
   SYNC_BROWSER_TABS_TIMEOUT,
 } from "./app_constants";
@@ -412,9 +413,8 @@ const ExcalidrawWrapper = ({
   const excalidrawAPI = useExcalidrawAPI();
 
   const [errorMessage, setErrorMessage] = useState("");
-  // The desktop app keeps boards local: no live collaboration or shareable
-  // links, which upload the scene to excalidraw.com servers.
-  const isDesktopApp = Boolean(window.boardStorage);
+  // the desktop app keeps boards local: no live collaboration or shareable
+  // links, which upload the scene to excalidraw.com servers
   const isCollabDisabled = isRunningInIframe() || isDesktopApp;
 
   const { editorTheme, appTheme, setAppTheme } = useHandleAppTheme();
@@ -1329,30 +1329,31 @@ const ExcalidrawWrapper = ({
             toggleTheme: true,
             export: {
               onExportToBackend: isDesktopApp ? undefined : onExportToBackend,
-              renderCustomUI: excalidrawAPI
-                ? (elements, appState, files) => {
-                    return (
-                      <ExportToExcalidrawPlus
-                        elements={elements}
-                        appState={appState}
-                        files={files}
-                        name={excalidrawAPI.getName()}
-                        onError={(error) => {
-                          excalidrawAPI?.updateScene({
-                            appState: {
-                              errorMessage: error.message,
-                            },
-                          });
-                        }}
-                        onSuccess={() => {
-                          excalidrawAPI.updateScene({
-                            appState: { openDialog: null },
-                          });
-                        }}
-                      />
-                    );
-                  }
-                : undefined,
+              renderCustomUI:
+                excalidrawAPI && !isDesktopApp
+                  ? (elements, appState, files) => {
+                      return (
+                        <ExportToExcalidrawPlus
+                          elements={elements}
+                          appState={appState}
+                          files={files}
+                          name={excalidrawAPI.getName()}
+                          onError={(error) => {
+                            excalidrawAPI?.updateScene({
+                              appState: {
+                                errorMessage: error.message,
+                              },
+                            });
+                          }}
+                          onSuccess={() => {
+                            excalidrawAPI.updateScene({
+                              appState: { openDialog: null },
+                            });
+                          }}
+                        />
+                      );
+                    }
+                  : undefined,
             },
           },
         }}
@@ -1413,7 +1414,7 @@ const ExcalidrawWrapper = ({
         <OverwriteConfirmDialog>
           <OverwriteConfirmDialog.Actions.ExportToImage />
           <OverwriteConfirmDialog.Actions.SaveToDisk />
-          {excalidrawAPI && (
+          {excalidrawAPI && !isDesktopApp && (
             <OverwriteConfirmDialog.Action
               title={t("overwriteConfirm.action.excalidrawPlus.title")}
               actionLabel={t("overwriteConfirm.action.excalidrawPlus.button")}
@@ -1628,7 +1629,9 @@ const ExcalidrawWrapper = ({
                 );
               },
             },
-            ...(isExcalidrawPlusSignedUser
+            ...(isDesktopApp
+              ? []
+              : isExcalidrawPlusSignedUser
               ? [
                   {
                     ...ExcalidrawPlusAppCommand,
@@ -1641,7 +1644,7 @@ const ExcalidrawWrapper = ({
               label: t("overwriteConfirm.action.excalidrawPlus.button"),
               category: DEFAULT_CATEGORIES.export,
               icon: exportToPlus,
-              predicate: true,
+              predicate: !isDesktopApp,
               keywords: ["plus", "export", "save", "backup"],
               perform: () => {
                 if (excalidrawAPI) {

@@ -1,7 +1,7 @@
 import { Footer } from "@excalidraw/excalidraw/index";
 import React from "react";
 
-import { isExcalidrawPlusSignedUser } from "../app_constants";
+import { isDesktopApp, isExcalidrawPlusSignedUser } from "../app_constants";
 
 import { DebugFooter, isVisualDebuggerEnabled } from "./DebugCanvas";
 import { EncryptedIcon } from "./EncryptedIcon";
@@ -18,7 +18,8 @@ export const AppFooter = React.memo(
           }}
         >
           {isVisualDebuggerEnabled() && <DebugFooter onChange={onChange} />}
-          {!isExcalidrawPlusSignedUser && <EncryptedIcon />}
+          {/* links to Excalidraw+'s blog; boards in the desktop app are local */}
+          {!isExcalidrawPlusSignedUser && !isDesktopApp && <EncryptedIcon />}
         </div>
       </Footer>
     );
