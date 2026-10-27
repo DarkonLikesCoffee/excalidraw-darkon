@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
-const { app, BrowserWindow, ipcMain, Menu, dialog, protocol, net } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu, dialog, protocol, net, shell } = require("electron");
 const boardStorage = require("./storage/boards.cjs");
 const personalFonts = require("./storage/personalFonts.cjs");
 
@@ -19,7 +19,7 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 app.on("second-instance", () => {
-  const win = BrowserWindow.getAllWindows()[0];
+  const win = BrowserWindow.getAllWindows().find((w) => w.isVisible() || w.isMinimized());
   if (!win) return;
   if (win.isMinimized()) win.restore();
   win.show();
@@ -171,6 +171,42 @@ ipcMain.on("window:maximize", (event) => {
 });
 ipcMain.on("window:close", (event) => BrowserWindow.fromWebContents(event.sender)?.close());
 
+// Web links open in the default browser, never inside the app.
+function openInBrowser(url) {
+  try {
+    if (["http:", "https:", "mailto:"].includes(new URL(url).protocol)) void shell.openExternal(url);
+  } catch {}
+}
+
+function handleLinks(win) {
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    // Excalidraw opens element links in a blank window and sets its location
+    // afterwards: create it hidden and redirect that navigation below.
+    if (url === "about:blank") return { action: "allow", overrideBrowserWindowOptions: { show: false } };
+    openInBrowser(url);
+    return { action: "deny" };
+  });
+  win.webContents.on("did-create-window", (child) => {
+    child.webContents.on("will-navigate", (event, url) => {
+      event.preventDefault();
+      openInBrowser(url);
+      child.close();
+    });
+    // don't leave it behind when the navigation never starts (e.g. file: links
+    // are blocked), as a hidden window would keep the app running
+    const timeout = setTimeout(() => {
+      if (!child.isDestroyed()) child.close();
+    }, 5000);
+    child.on("closed", () => clearTimeout(timeout));
+  });
+  // the app window itself only ever shows the app
+  win.webContents.on("will-navigate", (event, url) => {
+    if (new URL(url).origin === new URL(win.webContents.getURL()).origin) return;
+    event.preventDefault();
+    openInBrowser(url);
+  });
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -181,6 +217,7 @@ function createWindow() {
     icon: path.join(__dirname, "icon.png"),
     webPreferences: { preload: path.join(__dirname, "preload.cjs"), contextIsolation: true, nodeIntegration: false },
   });
+  handleLinks(win);
   win.webContents.on("before-input-event", (event, input) => {
     if (input.type === "keyDown" && input.control && input.shift && input.key.toLowerCase() === "i") win.webContents.toggleDevTools();
   });
