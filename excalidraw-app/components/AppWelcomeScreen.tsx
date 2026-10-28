@@ -32,6 +32,16 @@ export const AppWelcomeScreen: React.FC<{
         }
         return bit;
       });
+  } else if (isDesktopApp) {
+    // the default text warns about browser storage, but desktop boards are
+    // autosaved as .excalidraw files
+    headingContent = (
+      <>
+        Your board is saved automatically
+        <br />
+        as a file in your boards folder.
+      </>
+    );
   } else {
     headingContent = (
       <>
