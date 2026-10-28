@@ -2875,6 +2875,8 @@ class App extends React.Component<AppProps, AppState> {
     diagramToCode?: {
       generate: GenerateDiagramToCode;
     };
+    /** set while the host renders the (AI) text-to-diagram `TTDDialog` */
+    textToDiagram?: true;
   } = {};
 
   public setPlugins(plugins: Partial<App["plugins"]>) {

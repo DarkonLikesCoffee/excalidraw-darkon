@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import { useUIAppState } from "../../context/ui-appState";
 import { t } from "../../i18n";
@@ -34,12 +34,29 @@ export const TTDDialog = (
     | { __fallback: true },
 ) => {
   const appState = useUIAppState();
+  const app = useApp();
+  const isFallback = "__fallback" in props && props.__fallback;
+
+  // lets the editor offer text to diagram only when the host provides it
+  useLayoutEffect(() => {
+    if (isFallback) {
+      return;
+    }
+    app.setPlugins({ textToDiagram: true });
+    return () => app.setPlugins({ textToDiagram: undefined });
+  }, [app, isFallback]);
 
   if (appState.openDialog?.name !== "ttd") {
     return null;
   }
 
-  return <TTDDialogBase {...props} tab={appState.openDialog.tab} />;
+  return (
+    <TTDDialogBase
+      {...props}
+      // the fallback dialog only has the Mermaid tab
+      tab={isFallback ? "mermaid" : appState.openDialog.tab}
+    />
+  );
 };
 
 TTDDialog.WelcomeMessage = TTDWelcomeMessage;

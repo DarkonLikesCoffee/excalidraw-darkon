@@ -563,7 +563,7 @@ function CommandPaletteInner({
           category: DEFAULT_CATEGORIES.tools,
           icon: brainIconThin,
           viewMode: false,
-          predicate: appProps.aiEnabled,
+          predicate: appProps.aiEnabled && !!app.plugins.textToDiagram,
           perform: () => {
             setAppState((state) => ({
               ...state,
