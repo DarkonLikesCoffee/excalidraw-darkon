@@ -40,6 +40,8 @@ Not checked on your machine, because they were added after your checks:
 - Links open in the default browser (links in drawings, menu and help links).
 - Live collaboration and shareable links are hidden in the desktop app.
 - Excalidraw+ is hidden in the desktop app.
+- AI "Text to diagram" is removed in the desktop app; "Mermaid to Excalidraw" still works.
+- The welcome screen text on an empty board.
 
 ## Checked by Claude in the cloud
 
@@ -52,6 +54,8 @@ Run in the real Electron app on Linux (virtual display, no window manager), driv
 - **Links:** with `yarn desktop` and the AppImage, clicking a link in a drawing, opening a `_blank` link and navigating the main window away all hand the URL to the default browser (recorded instead of launched in the cloud); no extra window stays open and the app stays on its page. `file:` links are not opened, and the temporary blank window they leave is closed after 5 seconds. (Before this change, external pages opened in an app window without access to the desktop APIs.)
 - **No collaboration / share links:** in the desktop app (development and AppImage) there is no live collaboration button or menu item, "Save to..." has no "Shareable link" option, and the command palette has no "Live collaboration" or "Share" commands. The browser version is unchanged.
 - **No Excalidraw+:** in the desktop app (development and AppImage) the main menu has no "Excalidraw+" / "Sign up", "Save to..." only offers "Save to disk", the command palette has no Excalidraw+ commands, the welcome screen has no sign-up link, the sidebar only has Excalidraw's search and library tabs (no Excalidraw+ promo tabs), and the footer has no "end-to-end encrypted" icon (it links to Excalidraw+'s blog). The browser version still shows all of them.
+- **No AI text to diagram, Mermaid kept:** in the desktop app (development and AppImage) the toolbar's extra tools and the command palette no longer offer "Text to diagram"; "Mermaid to Excalidraw" opens the Mermaid-only dialog, and inserting its example adds the diagram to the board (saved to the file), also offline in the AppImage. "Wireframe to code" (AI) is unchanged. The browser version still has "Text to diagram".
+- **Welcome screen:** in the desktop app an empty board says "Your board is saved automatically as a file in your boards folder." instead of the browser-storage warning; the browser version keeps the original text.
 - **Dashboard dark mode:** the dashboard, its dialogs and menus and the title bar follow the editor theme (also when toggled inside the editor); the light theme is pixel-identical to before.
 - **Icon and version:** the AppImage uses `electron/icon.png`; Settings → About shows the version from `package.json` (also in the packaged app).
 - **Boards:** create, draw, autosave to the `.excalidraw` file, back to the dashboard, reopen, full restart and reopen; recent list and thumbnails update.
@@ -63,4 +67,3 @@ Run in the real Electron app on Linux (virtual display, no window manager), driv
 - **Canvas background in dark mode:** very bright colors can't be shown exactly on the themed background; picking `#00FF00` for the background shows the closest possible green (`#37b637`, stored as `#009400`).
 - **Separate browser storage:** the installed app and `yarn desktop` keep their own theme and shape library; boards, custom fonts, settings and recent boards are shared (same data folder).
 - **Unsigned packages:** Windows (SmartScreen) and macOS (Gatekeeper) warn on first launch; Windows and macOS packages must be built on those systems. Code signing was decided against (the app is for you and a few friends).
-- **Welcome screen text:** on an empty board, the welcome screen still says drawings are saved in the browser's storage; in the desktop app boards are saved as `.excalidraw` files.
