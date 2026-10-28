@@ -1434,7 +1434,7 @@ const ExcalidrawWrapper = ({
         <AppFooter onChange={() => excalidrawAPI?.refresh()} />
         {excalidrawAPI && <AIComponents excalidrawAPI={excalidrawAPI} />}
 
-        <TTDDialogTrigger />
+        {!isDesktopApp && <TTDDialogTrigger />}
         {isCollaborating && isOffline && (
           <div className="alertalert--warning">
             {t("alerts.collabOfflineWarning")}

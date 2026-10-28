@@ -14,6 +14,7 @@ import { safelyParseJSON } from "@excalidraw/common";
 import type { StreamChunk } from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 
+import { isDesktopApp } from "../app_constants";
 import { TTDIndexedDBAdapter } from "../data/TTDStorage";
 
 export const AIComponents = ({
@@ -150,25 +151,29 @@ export const AIComponents = ({
         }}
       />
 
-      <TTDDialog
-        onTextSubmit={async (props) => {
-          const { onChunk, onStreamCreated, signal, messages } = props;
+      {/* no AI text to diagram in the desktop app (it sends the prompt to
+          Excalidraw's AI server); Mermaid stays via the built-in dialog */}
+      {!isDesktopApp && (
+        <TTDDialog
+          onTextSubmit={async (props) => {
+            const { onChunk, onStreamCreated, signal, messages } = props;
 
-          const result = await TTDStreamFetch({
-            url: `${
-              import.meta.env.VITE_APP_AI_BACKEND
-            }/v1/ai/text-to-diagram/chat-streaming`,
-            messages,
-            onChunk,
-            onStreamCreated,
-            extractRateLimits: true,
-            signal,
-          });
+            const result = await TTDStreamFetch({
+              url: `${
+                import.meta.env.VITE_APP_AI_BACKEND
+              }/v1/ai/text-to-diagram/chat-streaming`,
+              messages,
+              onChunk,
+              onStreamCreated,
+              extractRateLimits: true,
+              signal,
+            });
 
-          return result;
-        }}
-        persistenceAdapter={TTDIndexedDBAdapter}
-      />
+            return result;
+          }}
+          persistenceAdapter={TTDIndexedDBAdapter}
+        />
+      )}
     </>
   );
 };
