@@ -25,8 +25,7 @@ You reported that you completed the local checklist on your machine and that eve
 
 Not recorded:
 
-- **Operating system** used for these checks.
-- **Offline use of the installed app** (starting it with the internet turned off): not explicitly confirmed.
+- **Operating system** used for these checks (the final version was built on Windows).
 
 After the merge into `main`, you reported that you tested the final version following the local guide and that it looks fine. The guide covered:
 
@@ -35,13 +34,15 @@ After the merge into `main`, you reported that you tested the final version foll
 - [x] **Packaging** with `yarn desktop:dist` (publishing disabled: no `latest*.yml` files).
 - [x] **Installed app without the dev server:** runs from `app://excalidraw/`, shows Settings → About 0.1.0, boards and custom fonts work, and a second launch (also while `yarn desktop` runs) focuses the existing window.
 
-Not checked on your machine, because they were added after your checks:
+For the final version (0.1.0), you built it on your Windows PC with `yarn desktop:dist` and reported that everything is perfect. The changes added since your previous check were:
 
 - Links open in the default browser (links in drawings, menu and help links).
 - Live collaboration and shareable links are hidden in the desktop app.
 - Excalidraw+ is hidden in the desktop app.
 - AI "Text to diagram" is removed in the desktop app; "Mermaid to Excalidraw" still works.
 - The welcome screen text on an empty board.
+
+Still not explicitly confirmed: offline use of the installed app, and macOS.
 
 ## Checked by Claude in the cloud
 
